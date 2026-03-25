@@ -4,14 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ruta Archipiélago 🇮🇨</title>
-
   <style>
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #eaf7ff;
+      background: linear-gradient(180deg, #eaf7ff 0%, #dff2ff 100%);
       color: #1f2937;
       min-height: 100vh;
       display: flex;
@@ -22,7 +21,7 @@
 
     .card {
       width: 100%;
-      max-width: 520px;
+      max-width: 620px;
       background: #fff;
       border-radius: 24px;
       overflow: hidden;
@@ -62,16 +61,36 @@
       font-weight: bold;
     }
 
+    .top-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 16px 24px 8px;
+      font-weight: bold;
+      color: #004477;
+      text-align: center;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #e5eef7;
+      border-radius: 14px;
+      padding: 10px;
+    }
+
     .progress-wrap {
-      width: 100%;
-      height: 10px;
+      width: calc(100% - 48px);
+      margin: 8px 24px 0;
+      height: 12px;
       background: #eef2f7;
+      border-radius: 999px;
+      overflow: hidden;
     }
 
     .progress {
       height: 100%;
       width: 0%;
-      background: #ffd700;
+      background: linear-gradient(90deg, #ffd700, #ffbf00);
       transition: width 0.35s ease;
     }
 
@@ -87,10 +106,23 @@
       margin-bottom: 18px;
     }
 
+    .difficulty {
+      float: right;
+      background: #fff4cc;
+      color: #8a6200;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
     .question {
-      font-size: 21px;
+      font-size: 22px;
       margin-bottom: 20px;
       font-weight: 600;
+      line-height: 1.4;
+      clear: both;
     }
 
     input {
@@ -100,6 +132,11 @@
       border-radius: 16px;
       border: 2px solid #d1d5db;
       margin-bottom: 12px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #004477;
     }
 
     button {
@@ -110,23 +147,91 @@
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
+      transition: transform 0.05s ease, opacity 0.2s ease;
+    }
+
+    button:active {
+      transform: scale(0.99);
     }
 
     .primary { background: #004477; color: white; }
-    .secondary { background: #059669; color: white; }
+    .secondary { background: #059669; color: white; margin-top: 10px; }
+    .danger { background: #b91c1c; color: white; margin-top: 10px; }
+    .restart { background: #004477; color: white; margin-top: 16px; }
 
-    .correct { color: green; }
-    .incorrect { color: red; }
+    .feedback {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    .correct {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .incorrect {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    .fact {
+      margin-top: 14px;
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      padding: 12px 14px;
+      border-radius: 0 12px 12px 0;
+      color: #7c5200;
+      line-height: 1.5;
+    }
+
+    .final {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .final h2 {
+      font-size: 30px;
+      color: #004477;
+      margin-bottom: 10px;
+    }
+
+    .final p {
+      font-size: 18px;
+      line-height: 1.5;
+      color: #374151;
+    }
+
+    .big {
+      font-size: 60px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
-
 <body>
 
 <div class="card">
   <div class="header">
     <button id="muteBtn" class="mute-btn">🔊</button>
     <h1>Ruta Archipiélago 🇮🇨</h1>
-    <div id="subtitle"></div>
+    <div id="subtitle" class="subtitle"></div>
+  </div>
+
+  <div class="top-stats">
+    <div class="stat">❤️ Vidas: <span id="lives">3</span></div>
+    <div class="stat">🏆 Puntos: <span id="score">0</span></div>
+    <div class="stat">⏱️ Tiempo: <span id="timer">20</span></div>
   </div>
 
   <div class="progress-wrap">
@@ -137,55 +242,293 @@
 </div>
 
 <script>
-const levels = [
-  { island:"Lanzarote 🌵", question:"3 kg cuestan 6€. ¿8 kg?", answer:16 },
-  { island:"Fuerteventura 🧀", question:"4 cabras → 20kg. ¿10 cabras?", answer:50 },
-  { island:"Gran Canaria 🚌", question:"90 km/h → 40 min. ¿60 km/h?", answer:60 }
-];
+  const levels = [
+    {
+      island:"Lanzarote 🌵",
+      difficulty:"Fácil",
+      question:"3 kg de papas cuestan 6 €. ¿Cuánto costarán 8 kg?",
+      answer:16,
+      hint:"Proporcionalidad directa: más kilos, más dinero.",
+      fact:"En Lanzarote se cultiva sobre picón volcánico para conservar mejor la humedad."
+    },
+    {
+      island:"Fuerteventura 🧀",
+      difficulty:"Fácil",
+      question:"4 cabras comen 20 kg de forraje. ¿Cuántos kg necesitan 10 cabras?",
+      answer:50,
+      hint:"Si aumentan las cabras, aumenta la comida.",
+      fact:"El queso majorero es uno de los grandes orgullos de Canarias."
+    },
+    {
+      island:"Gran Canaria 🚌",
+      difficulty:"Media",
+      question:"Una guagua tarda 40 minutos a 90 km/h. Si va a 60 km/h, ¿cuántos minutos tardará?",
+      answer:60,
+      hint:"Menor velocidad, mayor tiempo: proporcionalidad inversa.",
+      fact:"Las Palmas tiene una de las redes de guaguas más usadas de España."
+    },
+    {
+      island:"Tenerife 🎭",
+      difficulty:"Media",
+      question:"Un disfraz cuesta 120 €. Si le hacen un 15 % de descuento, ¿cuánto dinero rebajan?",
+      answer:18,
+      hint:"Calcula el 15 % de 120.",
+      fact:"El Carnaval de Santa Cruz es una fiesta internacionalmente famosa."
+    },
+    {
+      island:"La Palma 🌋",
+      difficulty:"Media",
+      question:"6 camiones tardan 10 días en limpiar una zona. ¿Cuántos camiones hacen falta para hacerlo en 4 días?",
+      answer:15,
+      hint:"Menos días exige más camiones.",
+      fact:"La Palma combina volcanes, bosques y cielos brutales."
+    },
+    {
+      island:"La Gomera 🌿",
+      difficulty:"Media",
+      question:"En un mapa, 2 cm representan 5 km. Si una ruta mide 6 cm, ¿cuántos km son en realidad?",
+      answer:15,
+      hint:"Cada 2 cm son 5 km. Busca cuántos grupos de 2 hay en 6.",
+      fact:"El silbo gomero permite comunicarse a gran distancia."
+    },
+    {
+      island:"El Hierro ⚡",
+      difficulty:"Difícil",
+      question:"5 turbinas producen una cantidad de energía en 12 horas. ¿Cuántas horas tardarán 2 turbinas en producir lo mismo?",
+      answer:30,
+      hint:"Menos máquinas tardan más tiempo.",
+      fact:"El Hierro es un referente en energías renovables."
+    },
+    {
+      island:"La Graciosa 🚲",
+      difficulty:"Difícil",
+      question:"7 bicicletas tardan 8 días en repartir material. ¿Cuántos días tardarán 14 bicicletas haciendo el mismo trabajo?",
+      answer:4,
+      hint:"El doble de bicis, la mitad de tiempo.",
+      fact:"La Graciosa tiene un ritmo tan tranquilo que hasta las prisas se bajan en el muelle."
+    },
+    {
+      island:"La Palma 🔥",
+      difficulty:"Difícil",
+      question:"Un depósito se llena con 3 bombas en 12 horas. ¿Cuánto tardarán 4 bombas iguales?",
+      answer:9,
+      hint:"Más bombas, menos tiempo.",
+      fact:"En Canarias la proporcionalidad también viaja con casco y pala."
+    },
+    {
+      island:"Tenerife 🏔️",
+      difficulty:"Difícil",
+      question:"5 personas pagan 18 € cada una por una excursión. Si van 6 personas y el precio total es el mismo, ¿cuánto paga cada una?",
+      answer:15,
+      hint:"Primero calcula el precio total, luego reparte.",
+      fact:"Hasta el Teide parece más alto cuando toca calcular sin calculadora."
+    },
+    {
+      island:"Gran Canaria 📚",
+      difficulty:"Experto",
+      question:"Para fotocopiar un dossier, 8 impresoras iguales tardan 15 minutos. Si solo funcionan 5, ¿cuántos minutos tardarán?",
+      answer:24,
+      hint:"Trabajo fijo: impresoras por tiempo se compensa.",
+      fact:"Las impresoras del instituto siempre detectan cuándo tienes prisa. Ciencia pura."
+    },
+    {
+      island:"Fuerteventura 🌬️",
+      difficulty:"Experto",
+      question:"Un grupo recorre 18 km en 3 horas a ritmo constante. ¿Cuántos km recorrerá en 5 horas al mismo ritmo?",
+      answer:30,
+      hint:"Primero calcula cuántos km hace en 1 hora.",
+      fact:"Aquí ya no es nivel 'uy qué mono', aquí ya sudan un poco."
+    }
+  ];
 
-let i = 0;
+  const sounds = {
+    correct: new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'),
+    incorrect: new Audio('https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3'),
+    next: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3')
+  };
 
-function render() {
-  const level = levels[i];
+  let current = 0;
+  let score = 0;
+  let lives = 3;
+  let timeLeft = 20;
+  let timerId = null;
+  let muted = false;
+  let answeredCorrectly = false;
 
-  document.getElementById("subtitle").innerText = "Nivel " + (i+1);
-  document.getElementById("progressBar").style.width =
-    (i/levels.length*100)+"%";
+  const app = document.getElementById("app");
+  const subtitle = document.getElementById("subtitle");
+  const progressBar = document.getElementById("progressBar");
+  const livesEl = document.getElementById("lives");
+  const scoreEl = document.getElementById("score");
+  const timerEl = document.getElementById("timer");
+  const muteBtn = document.getElementById("muteBtn");
 
-  document.getElementById("app").innerHTML = `
-    <div class="tag">${level.island}</div>
-    <div class="question">${level.question}</div>
-    <input id="ans" placeholder="respuesta"/>
-    <button class="primary" onclick="check()">Responder</button>
-    <div id="fb"></div>
-  `;
-}
-
-function check(){
-  const val = parseFloat(document.getElementById("ans").value);
-
-  if(val === levels[i].answer){
-    document.getElementById("fb").innerHTML =
-      '<div class="correct">✔ Correcto</div>' +
-      '<button class="secondary" onclick="next()">Siguiente</button>';
-  } else {
-    document.getElementById("fb").innerHTML =
-      '<div class="incorrect">✘ Intenta otra vez</div>';
+  function playSound(name) {
+    if (muted) return;
+    const audio = sounds[name];
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
   }
-}
 
-function next(){
-  i++;
-
-  if(i >= levels.length){
-    document.getElementById("app").innerHTML = "<h2>🏆 Terminado</h2>";
-    return;
+  function updateTopBar() {
+    livesEl.textContent = lives;
+    scoreEl.textContent = score;
+    timerEl.textContent = timeLeft;
+    progressBar.style.width = ((current / levels.length) * 100) + "%";
+    subtitle.textContent = current < levels.length ? `Nivel ${current + 1} de ${levels.length}` : "Final";
   }
 
-  render();
-}
+  function startTimer() {
+    clearInterval(timerId);
+    timeLeft = 20;
+    updateTopBar();
 
-render();
+    timerId = setInterval(() => {
+      timeLeft--;
+      updateTopBar();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        loseLife("⏰ Se acabó el tiempo.", "La isla no espera, mi niña.");
+      }
+    }, 1000);
+  }
+
+  function renderLevel() {
+    updateTopBar();
+
+    const level = levels[current];
+    answeredCorrectly = false;
+
+    app.innerHTML = `
+      <div class="tag">${level.island}</div>
+      <div class="difficulty">${level.difficulty}</div>
+      <div class="question">${level.question}</div>
+      <input id="ans" type="number" placeholder="Escribe tu respuesta..." />
+      <button class="primary" id="checkBtn">Responder</button>
+      <div id="feedbackBox"></div>
+    `;
+
+    document.getElementById("checkBtn").addEventListener("click", checkAnswer);
+    document.getElementById("ans").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") checkAnswer();
+    });
+
+    startTimer();
+  }
+
+  function checkAnswer() {
+    if (answeredCorrectly) return;
+
+    const level = levels[current];
+    const val = parseFloat(document.getElementById("ans").value);
+    const feedbackBox = document.getElementById("feedbackBox");
+
+    if (isNaN(val)) {
+      feedbackBox.innerHTML = `
+        <div class="feedback incorrect">
+          Escribe un número válido.
+          <div class="hint">No me pongas jeroglíficos matemáticos ahora.</div>
+        </div>
+      `;
+      return;
+    }
+
+    if (val === level.answer) {
+      answeredCorrectly = true;
+      clearInterval(timerId);
+      score += 10 + timeLeft;
+      playSound("correct");
+      updateTopBar();
+
+      feedbackBox.innerHTML = `
+        <div class="feedback correct">
+          ✔ Correcto. Has conquistado la isla.
+        </div>
+        <div class="fact">${level.fact}</div>
+        <button class="secondary" id="nextBtn">Siguiente nivel</button>
+      `;
+
+      document.getElementById("nextBtn").addEventListener("click", nextLevel);
+    } else {
+      playSound("incorrect");
+      loseLife("✘ Incorrecto.", level.hint);
+    }
+  }
+
+  function loseLife(message, hint) {
+    lives--;
+    updateTopBar();
+
+    const feedbackBox = document.getElementById("feedbackBox");
+    if (feedbackBox) {
+      feedbackBox.innerHTML = `
+        <div class="feedback incorrect">
+          ${message}
+          <div class="hint">${hint}</div>
+        </div>
+      `;
+    }
+
+    if (lives <= 0) {
+      clearInterval(timerId);
+      showGameOver();
+    }
+  }
+
+  function nextLevel() {
+    playSound("next");
+    current++;
+
+    if (current >= levels.length) {
+      clearInterval(timerId);
+      showVictory();
+      return;
+    }
+
+    renderLevel();
+  }
+
+  function showGameOver() {
+    app.innerHTML = `
+      <div class="final">
+        <div class="big">💀</div>
+        <h2>Game Over</h2>
+        <p>Te has quedado sin vidas.</p>
+        <p>Puntuación final: <strong>${score}</strong></p>
+        <button class="restart" onclick="restartGame()">Reintentar</button>
+      </div>
+    `;
+  }
+
+  function showVictory() {
+    progressBar.style.width = "100%";
+    app.innerHTML = `
+      <div class="final">
+        <div class="big">🏆</div>
+        <h2>¡Archipiélago completado!</h2>
+        <p>Has superado todos los niveles.</p>
+        <p>Puntuación final: <strong>${score}</strong></p>
+        <button class="restart" onclick="restartGame()">Volver a jugar</button>
+      </div>
+    `;
+  }
+
+  function restartGame() {
+    current = 0;
+    score = 0;
+    lives = 3;
+    timeLeft = 20;
+    renderLevel();
+  }
+
+  muteBtn.addEventListener("click", () => {
+    muted = !muted;
+    muteBtn.textContent = muted ? "🔇" : "🔊";
+  });
+
+  renderLevel();
 </script>
 
 </body>
