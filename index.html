@@ -21,7 +21,7 @@
 
     .card {
       width: 100%;
-      max-width: 620px;
+      max-width: 680px;
       background: #fff;
       border-radius: 24px;
       overflow: hidden;
@@ -63,7 +63,7 @@
 
     .top-stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       padding: 16px 24px 8px;
       font-weight: bold;
@@ -94,7 +94,9 @@
       transition: width 0.35s ease;
     }
 
-    .content { padding: 24px; }
+    .content {
+      padding: 24px;
+    }
 
     .tag {
       display: inline-block;
@@ -156,7 +158,6 @@
 
     .primary { background: #004477; color: white; }
     .secondary { background: #059669; color: white; margin-top: 10px; }
-    .danger { background: #b91c1c; color: white; margin-top: 10px; }
     .restart { background: #004477; color: white; margin-top: 16px; }
 
     .feedback {
@@ -231,7 +232,6 @@
   <div class="top-stats">
     <div class="stat">❤️ Vidas: <span id="lives">3</span></div>
     <div class="stat">🏆 Puntos: <span id="score">0</span></div>
-    <div class="stat">⏱️ Tiempo: <span id="timer">20</span></div>
   </div>
 
   <div class="progress-wrap">
@@ -338,6 +338,70 @@
       answer:30,
       hint:"Primero calcula cuántos km hace en 1 hora.",
       fact:"Aquí ya no es nivel 'uy qué mono', aquí ya sudan un poco."
+    },
+    {
+      island:"Tenerife 🧮",
+      difficulty:"Experto",
+      question:"Si 12 lápices cuestan 18 €, ¿cuánto cuestan 20 lápices?",
+      answer:30,
+      hint:"Primero saca el precio de un lápiz.",
+      fact:"Cuando aparece material escolar, la proporcionalidad sale de la mochila."
+    },
+    {
+      island:"Gran Canaria 🧠",
+      difficulty:"Experto",
+      question:"Un coche recorre 150 km en 3 horas. ¿Cuántos km recorrerá en 7 horas?",
+      answer:350,
+      hint:"Velocidad constante: calcula cuántos km hace en 1 hora.",
+      fact:"Aquí el que no entendió la razón unitaria empieza a mirar al compañero con fe."
+    },
+    {
+      island:"La Palma 🔢",
+      difficulty:"Experto",
+      question:"5 obreros hacen un trabajo en 8 días. ¿Cuántos días tardarán 10 obreros?",
+      answer:4,
+      hint:"Más obreros, menos tiempo.",
+      fact:"La proporcionalidad inversa viene con cara amable y luego te la lía."
+    },
+    {
+      island:"El Hierro 🧩",
+      difficulty:"Experto",
+      question:"Si 2 kg de queso cuestan 5 €, ¿cuánto cuestan 9 kg?",
+      answer:22.5,
+      hint:"Calcula primero cuánto cuesta 1 kg.",
+      fact:"Sí, aquí entran decimales. Respira y sigue."
+    },
+    {
+      island:"La Gomera 🔥",
+      difficulty:"Experto",
+      question:"Un tren tarda 2 horas en recorrer 120 km. ¿Cuánto tardará en recorrer 300 km a la misma velocidad?",
+      answer:5,
+      hint:"Primero calcula la velocidad.",
+      fact:"En este punto ya no es un juego: es una selección natural matemática."
+    },
+    {
+      island:"Lanzarote 📦",
+      difficulty:"Experto",
+      question:"8 cajas pesan 56 kg. ¿Cuánto pesan 15 cajas iguales?",
+      answer:105,
+      hint:"Peso por caja y luego multiplica.",
+      fact:"Las cajas siempre parecen inocentes hasta que toca dividir."
+    },
+    {
+      island:"Fuerteventura 🐐",
+      difficulty:"Experto",
+      question:"9 sacos de pienso duran 12 días. ¿Cuántos días durarán 15 sacos al mismo ritmo?",
+      answer:20,
+      hint:"Más sacos, más días.",
+      fact:"Aquí ya se ve quién domina directa e inversa sin pestañear."
+    },
+    {
+      island:"Gran Canaria 🚢",
+      difficulty:"Experto",
+      question:"Una bomba extrae 240 litros en 6 minutos. ¿Cuántos litros extraerá en 15 minutos al mismo ritmo?",
+      answer:600,
+      hint:"Calcula litros por minuto.",
+      fact:"Si has llegado aquí, ya casi tienes pasaporte matemático interinsular."
     }
   ];
 
@@ -350,8 +414,6 @@
   let current = 0;
   let score = 0;
   let lives = 3;
-  let timeLeft = 20;
-  let timerId = null;
   let muted = false;
   let answeredCorrectly = false;
 
@@ -360,7 +422,6 @@
   const progressBar = document.getElementById("progressBar");
   const livesEl = document.getElementById("lives");
   const scoreEl = document.getElementById("score");
-  const timerEl = document.getElementById("timer");
   const muteBtn = document.getElementById("muteBtn");
 
   function playSound(name) {
@@ -374,25 +435,10 @@
   function updateTopBar() {
     livesEl.textContent = lives;
     scoreEl.textContent = score;
-    timerEl.textContent = timeLeft;
     progressBar.style.width = ((current / levels.length) * 100) + "%";
-    subtitle.textContent = current < levels.length ? `Nivel ${current + 1} de ${levels.length}` : "Final";
-  }
-
-  function startTimer() {
-    clearInterval(timerId);
-    timeLeft = 20;
-    updateTopBar();
-
-    timerId = setInterval(() => {
-      timeLeft--;
-      updateTopBar();
-
-      if (timeLeft <= 0) {
-        clearInterval(timerId);
-        loseLife("⏰ Se acabó el tiempo.", "La isla no espera, mi niña.");
-      }
-    }, 1000);
+    subtitle.textContent = current < levels.length
+      ? `Nivel ${current + 1} de ${levels.length}`
+      : "Final";
   }
 
   function renderLevel() {
@@ -405,7 +451,7 @@
       <div class="tag">${level.island}</div>
       <div class="difficulty">${level.difficulty}</div>
       <div class="question">${level.question}</div>
-      <input id="ans" type="number" placeholder="Escribe tu respuesta..." />
+      <input id="ans" type="number" step="any" placeholder="Escribe tu respuesta..." />
       <button class="primary" id="checkBtn">Responder</button>
       <div id="feedbackBox"></div>
     `;
@@ -414,8 +460,6 @@
     document.getElementById("ans").addEventListener("keydown", (e) => {
       if (e.key === "Enter") checkAnswer();
     });
-
-    startTimer();
   }
 
   function checkAnswer() {
@@ -435,10 +479,9 @@
       return;
     }
 
-    if (val === level.answer) {
+    if (Math.abs(val - level.answer) < 0.001) {
       answeredCorrectly = true;
-      clearInterval(timerId);
-      score += 10 + timeLeft;
+      score += 10;
       playSound("correct");
       updateTopBar();
 
@@ -472,7 +515,6 @@
     }
 
     if (lives <= 0) {
-      clearInterval(timerId);
       showGameOver();
     }
   }
@@ -482,7 +524,6 @@
     current++;
 
     if (current >= levels.length) {
-      clearInterval(timerId);
       showVictory();
       return;
     }
@@ -508,7 +549,7 @@
       <div class="final">
         <div class="big">🏆</div>
         <h2>¡Archipiélago completado!</h2>
-        <p>Has superado todos los niveles.</p>
+        <p>Has superado los 20 problemas.</p>
         <p>Puntuación final: <strong>${score}</strong></p>
         <button class="restart" onclick="restartGame()">Volver a jugar</button>
       </div>
@@ -519,7 +560,6 @@
     current = 0;
     score = 0;
     lives = 3;
-    timeLeft = 20;
     renderLevel();
   }
 
