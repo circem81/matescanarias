@@ -63,7 +63,7 @@
 
     .top-stats {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       padding: 16px 24px 8px;
       font-weight: bold;
@@ -232,6 +232,7 @@
   <div class="top-stats">
     <div class="stat">❤️ Vidas: <span id="lives">3</span></div>
     <div class="stat">🏆 Puntos: <span id="score">0</span></div>
+    <div class="stat">⏱️ Tiempo: <span id="timer">90</span></div>
   </div>
 
   <div class="progress-wrap">
@@ -261,11 +262,11 @@
     },
     {
       island:"Gran Canaria 🚌",
-      difficulty:"Media",
-      question:"Una guagua tarda 40 minutos a 90 km/h. Si va a 60 km/h, ¿cuántos minutos tardará?",
-      answer:60,
-      hint:"Menor velocidad, mayor tiempo: proporcionalidad inversa.",
-      fact:"Las Palmas tiene una de las redes de guaguas más usadas de España."
+      difficulty:"Fácil",
+      question:"Un grupo recorre 18 km en 3 horas a ritmo constante. ¿Cuántos km recorrerá en 5 horas?",
+      answer:30,
+      hint:"Primero calcula cuántos km hace en 1 hora.",
+      fact:"Aquí empiezan suaves, que luego viene la curva."
     },
     {
       island:"Tenerife 🎭",
@@ -273,7 +274,7 @@
       question:"Un disfraz cuesta 120 €. Si le hacen un 15 % de descuento, ¿cuánto dinero rebajan?",
       answer:18,
       hint:"Calcula el 15 % de 120.",
-      fact:"El Carnaval de Santa Cruz es una fiesta internacionalmente famosa."
+      fact:"El Carnaval de Santa Cruz no baja el nivel, tú tampoco."
     },
     {
       island:"La Palma 🌋",
@@ -281,7 +282,7 @@
       question:"6 camiones tardan 10 días en limpiar una zona. ¿Cuántos camiones hacen falta para hacerlo en 4 días?",
       answer:15,
       hint:"Menos días exige más camiones.",
-      fact:"La Palma combina volcanes, bosques y cielos brutales."
+      fact:"Aquí la proporcionalidad inversa entra con botas de trabajo."
     },
     {
       island:"La Gomera 🌿",
@@ -289,31 +290,23 @@
       question:"En un mapa, 2 cm representan 5 km. Si una ruta mide 6 cm, ¿cuántos km son en realidad?",
       answer:15,
       hint:"Cada 2 cm son 5 km. Busca cuántos grupos de 2 hay en 6.",
-      fact:"El silbo gomero permite comunicarse a gran distancia."
+      fact:"El silbo gomero llega lejos. Tus mates también deberían."
     },
     {
       island:"El Hierro ⚡",
-      difficulty:"Difícil",
-      question:"5 turbinas producen una cantidad de energía en 12 horas. ¿Cuántas horas tardarán 2 turbinas en producir lo mismo?",
+      difficulty:"Media",
+      question:"Si 12 lápices cuestan 18 €, ¿cuánto cuestan 20 lápices?",
       answer:30,
-      hint:"Menos máquinas tardan más tiempo.",
-      fact:"El Hierro es un referente en energías renovables."
+      hint:"Saca primero el precio de un lápiz.",
+      fact:"Material escolar: inocente por fuera, tramposo por dentro."
     },
     {
       island:"La Graciosa 🚲",
-      difficulty:"Difícil",
-      question:"7 bicicletas tardan 8 días en repartir material. ¿Cuántos días tardarán 14 bicicletas haciendo el mismo trabajo?",
-      answer:4,
-      hint:"El doble de bicis, la mitad de tiempo.",
-      fact:"La Graciosa tiene un ritmo tan tranquilo que hasta las prisas se bajan en el muelle."
-    },
-    {
-      island:"La Palma 🔥",
-      difficulty:"Difícil",
-      question:"Un depósito se llena con 3 bombas en 12 horas. ¿Cuánto tardarán 4 bombas iguales?",
-      answer:9,
-      hint:"Más bombas, menos tiempo.",
-      fact:"En Canarias la proporcionalidad también viaja con casco y pala."
+      difficulty:"Media",
+      question:"8 cajas pesan 56 kg. ¿Cuánto pesan 15 cajas iguales?",
+      answer:105,
+      hint:"Peso por caja y luego multiplica.",
+      fact:"Aquí el alumnado empieza a sospechar que las cajas no son amigas."
     },
     {
       island:"Tenerife 🏔️",
@@ -321,87 +314,95 @@
       question:"5 personas pagan 18 € cada una por una excursión. Si van 6 personas y el precio total es el mismo, ¿cuánto paga cada una?",
       answer:15,
       hint:"Primero calcula el precio total, luego reparte.",
-      fact:"Hasta el Teide parece más alto cuando toca calcular sin calculadora."
+      fact:"Hasta el Teide parece más alto cuando toca pensar dos pasos."
     },
     {
       island:"Gran Canaria 📚",
-      difficulty:"Experto",
+      difficulty:"Difícil",
       question:"Para fotocopiar un dossier, 8 impresoras iguales tardan 15 minutos. Si solo funcionan 5, ¿cuántos minutos tardarán?",
       answer:24,
       hint:"Trabajo fijo: impresoras por tiempo se compensa.",
-      fact:"Las impresoras del instituto siempre detectan cuándo tienes prisa. Ciencia pura."
+      fact:"Las impresoras siempre huelen el miedo."
     },
     {
       island:"Fuerteventura 🌬️",
-      difficulty:"Experto",
-      question:"Un grupo recorre 18 km en 3 horas a ritmo constante. ¿Cuántos km recorrerá en 5 horas al mismo ritmo?",
-      answer:30,
-      hint:"Primero calcula cuántos km hace en 1 hora.",
-      fact:"Aquí ya no es nivel 'uy qué mono', aquí ya sudan un poco."
+      difficulty:"Difícil",
+      question:"9 sacos de pienso duran 12 días. ¿Cuántos días durarán 15 sacos al mismo ritmo?",
+      answer:20,
+      hint:"Más sacos, más días.",
+      fact:"Aquí ya no es 'qué bonito'; aquí ya hay oficio."
     },
     {
-      island:"Tenerife 🧮",
-      difficulty:"Experto",
-      question:"Si 12 lápices cuestan 18 €, ¿cuánto cuestan 20 lápices?",
-      answer:30,
-      hint:"Primero saca el precio de un lápiz.",
-      fact:"Cuando aparece material escolar, la proporcionalidad sale de la mochila."
-    },
-    {
-      island:"Gran Canaria 🧠",
-      difficulty:"Experto",
-      question:"Un coche recorre 150 km en 3 horas. ¿Cuántos km recorrerá en 7 horas?",
-      answer:350,
-      hint:"Velocidad constante: calcula cuántos km hace en 1 hora.",
-      fact:"Aquí el que no entendió la razón unitaria empieza a mirar al compañero con fe."
-    },
-    {
-      island:"La Palma 🔢",
-      difficulty:"Experto",
-      question:"5 obreros hacen un trabajo en 8 días. ¿Cuántos días tardarán 10 obreros?",
-      answer:4,
-      hint:"Más obreros, menos tiempo.",
-      fact:"La proporcionalidad inversa viene con cara amable y luego te la lía."
-    },
-    {
-      island:"El Hierro 🧩",
-      difficulty:"Experto",
-      question:"Si 2 kg de queso cuestan 5 €, ¿cuánto cuestan 9 kg?",
-      answer:22.5,
-      hint:"Calcula primero cuánto cuesta 1 kg.",
-      fact:"Sí, aquí entran decimales. Respira y sigue."
+      island:"La Palma 🔥",
+      difficulty:"Difícil",
+      question:"Un depósito se llena con 3 bombas en 12 horas. ¿Cuánto tardarán 4 bombas iguales?",
+      answer:9,
+      hint:"Más bombas, menos tiempo.",
+      fact:"La proporcionalidad inversa siempre viene a liarla con educación."
     },
     {
       island:"La Gomera 🔥",
-      difficulty:"Experto",
+      difficulty:"Difícil",
       question:"Un tren tarda 2 horas en recorrer 120 km. ¿Cuánto tardará en recorrer 300 km a la misma velocidad?",
       answer:5,
       hint:"Primero calcula la velocidad.",
-      fact:"En este punto ya no es un juego: es una selección natural matemática."
+      fact:"Aquí ya toca hilar fino y no responder a ojo alegre."
+    },
+    {
+      island:"El Hierro 🧩",
+      difficulty:"Difícil",
+      question:"Si 2 kg de queso cuestan 5 €, ¿cuánto cuestan 9 kg?",
+      answer:22.5,
+      hint:"Calcula primero cuánto cuesta 1 kg.",
+      fact:"Sí, ahora entran los decimales. Respira, no invoques a Pitágoras."
     },
     {
       island:"Lanzarote 📦",
       difficulty:"Experto",
-      question:"8 cajas pesan 56 kg. ¿Cuánto pesan 15 cajas iguales?",
-      answer:105,
-      hint:"Peso por caja y luego multiplica.",
-      fact:"Las cajas siempre parecen inocentes hasta que toca dividir."
+      question:"5 obreros hacen un trabajo en 8 días. ¿Cuántos días tardarán 10 obreros?",
+      answer:4,
+      hint:"Más obreros, menos tiempo.",
+      fact:"La inversa ya está aquí y no ha venido a saludar."
     },
     {
       island:"Fuerteventura 🐐",
       difficulty:"Experto",
-      question:"9 sacos de pienso duran 12 días. ¿Cuántos días durarán 15 sacos al mismo ritmo?",
-      answer:20,
-      hint:"Más sacos, más días.",
-      fact:"Aquí ya se ve quién domina directa e inversa sin pestañear."
+      question:"Una bomba extrae 240 litros en 6 minutos. ¿Cuántos litros extraerá en 15 minutos al mismo ritmo?",
+      answer:600,
+      hint:"Calcula litros por minuto.",
+      fact:"Ya huele a examen, pero con banderita canaria."
     },
     {
       island:"Gran Canaria 🚢",
       difficulty:"Experto",
-      question:"Una bomba extrae 240 litros en 6 minutos. ¿Cuántos litros extraerá en 15 minutos al mismo ritmo?",
-      answer:600,
-      hint:"Calcula litros por minuto.",
-      fact:"Si has llegado aquí, ya casi tienes pasaporte matemático interinsular."
+      question:"7 bicicletas tardan 8 días en repartir material. ¿Cuántos días tardarán 14 bicicletas haciendo el mismo trabajo?",
+      answer:4,
+      hint:"El doble de bicis, la mitad de tiempo.",
+      fact:"Aquí ya deberían empezar a sentir respeto matemático."
+    },
+    {
+      island:"Tenerife 🧠",
+      difficulty:"Experto",
+      question:"5 turbinas producen una cantidad de energía en 12 horas. ¿Cuántas horas tardarán 2 turbinas en producir lo mismo?",
+      answer:30,
+      hint:"Menos máquinas tardan más tiempo.",
+      fact:"Este problema no muerde, pero enseña los dientes."
+    },
+    {
+      island:"La Palma 🧪",
+      difficulty:"Experto",
+      question:"Un coche recorre 150 km en 3 horas. ¿Cuántos km recorrerá en 7 horas a velocidad constante?",
+      answer:350,
+      hint:"Primero calcula cuántos km hace en 1 hora.",
+      fact:"Aquí el que domina la razón unitaria va como un cohete."
+    },
+    {
+      island:"Archipiélago Final 🏆",
+      difficulty:"Jefa final",
+      question:"Si 4 operarios montan 12 mesas en 3 horas, ¿cuántas mesas montarán 6 operarios en 5 horas manteniendo el mismo ritmo?",
+      answer:30,
+      hint:"Primero calcula cuántas mesas monta 1 operario en 1 hora.",
+      fact:"Si han llegado aquí, ya no son alumnado: son supervivientes."
     }
   ];
 
@@ -416,12 +417,15 @@
   let lives = 3;
   let muted = false;
   let answeredCorrectly = false;
+  let timeLeft = 90;
+  let timerId = null;
 
   const app = document.getElementById("app");
   const subtitle = document.getElementById("subtitle");
   const progressBar = document.getElementById("progressBar");
   const livesEl = document.getElementById("lives");
   const scoreEl = document.getElementById("score");
+  const timerEl = document.getElementById("timer");
   const muteBtn = document.getElementById("muteBtn");
 
   function playSound(name) {
@@ -435,10 +439,27 @@
   function updateTopBar() {
     livesEl.textContent = lives;
     scoreEl.textContent = score;
+    timerEl.textContent = timeLeft;
     progressBar.style.width = ((current / levels.length) * 100) + "%";
     subtitle.textContent = current < levels.length
       ? `Nivel ${current + 1} de ${levels.length}`
       : "Final";
+  }
+
+  function startTimer() {
+    clearInterval(timerId);
+    timeLeft = 90;
+    updateTopBar();
+
+    timerId = setInterval(() => {
+      timeLeft--;
+      updateTopBar();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        loseLife("⏰ Se acabó el tiempo.", "Piensa con calma, pero no te vayas a vivir al problema.");
+      }
+    }, 1000);
   }
 
   function renderLevel() {
@@ -460,6 +481,8 @@
     document.getElementById("ans").addEventListener("keydown", (e) => {
       if (e.key === "Enter") checkAnswer();
     });
+
+    startTimer();
   }
 
   function checkAnswer() {
@@ -481,7 +504,8 @@
 
     if (Math.abs(val - level.answer) < 0.001) {
       answeredCorrectly = true;
-      score += 10;
+      clearInterval(timerId);
+      score += 10 + timeLeft;
       playSound("correct");
       updateTopBar();
 
@@ -532,6 +556,7 @@
   }
 
   function showGameOver() {
+    clearInterval(timerId);
     app.innerHTML = `
       <div class="final">
         <div class="big">💀</div>
@@ -544,6 +569,7 @@
   }
 
   function showVictory() {
+    clearInterval(timerId);
     progressBar.style.width = "100%";
     app.innerHTML = `
       <div class="final">
@@ -557,9 +583,11 @@
   }
 
   function restartGame() {
+    clearInterval(timerId);
     current = 0;
     score = 0;
     lives = 3;
+    timeLeft = 90;
     renderLevel();
   }
 
