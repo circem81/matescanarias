@@ -94,9 +94,7 @@
       transition: width 0.35s ease;
     }
 
-    .content {
-      padding: 24px;
-    }
+    .content { padding: 24px; }
 
     .panel {
       border-top: 1px solid #eef2f7;
@@ -155,9 +153,7 @@
       outline: none;
     }
 
-    input:focus {
-      border-color: #004477;
-    }
+    input:focus { border-color: #004477; }
 
     button {
       width: 100%;
@@ -170,9 +166,7 @@
       transition: transform 0.05s ease, opacity 0.2s ease;
     }
 
-    button:active {
-      transform: scale(0.99);
-    }
+    button:active { transform: scale(0.99); }
 
     .primary { background: #004477; color: white; }
     .secondary { background: #059669; color: white; margin-top: 10px; }
@@ -198,12 +192,7 @@
       border: 1px solid #fecaca;
     }
 
-    .hint {
-      margin-top: 8px;
-      font-size: 14px;
-      font-weight: normal;
-      font-style: italic;
-    }
+    .hint { margin-top: 8px; font-size: 14px; font-weight: normal; font-style: italic; }
 
     .fact {
       margin-top: 14px;
@@ -212,30 +201,16 @@
       padding: 12px 14px;
       border-radius: 0 12px 12px 0;
       color: #7c5200;
-      line-height: 1.5;
+      line-length: 1.5;
     }
 
-    .final {
-      text-align: center;
-      padding: 12px 0;
-    }
+    .final { text-align: center; padding: 12px 0; }
 
-    .final h2 {
-      font-size: 30px;
-      color: #004477;
-      margin-bottom: 10px;
-    }
+    .final h2 { font-size: 30px; color: #004477; margin-bottom: 10px; }
 
-    .final p {
-      font-size: 18px;
-      line-height: 1.5;
-      color: #374151;
-    }
+    .final p { font-size: 18px; line-height: 1.5; color: #374151; }
 
-    .big {
-      font-size: 60px;
-      margin-bottom: 8px;
-    }
+    .big { font-size: 60px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -257,12 +232,11 @@
     <div id="progressBar" class="progress"></div>
   </div>
 
-  <!-- Registro + ranking -->
   <div id="registerBox" class="content panel">
     <h3>Registro del alumnado</h3>
     <input id="studentName" type="text" placeholder="Nombre (o apodo) para ranking" />
     <button id="registerBtn" class="secondary">Entrar</button>
-    <small>Consejo: entra antes de jugar si quieres que te cuente el registro. Si no, luego no digas que no avisamos 😄</small>
+    <small>Consejo: entra antes de jugar si quieres que te cuente el registro.</small>
   </div>
 
   <div id="rankingBox" class="content panel">
@@ -278,166 +252,205 @@
     {
       island:"Lanzarote 🌵",
       difficulty:"Fácil",
+      time:85,
       question:"3 kg de papas cuestan 6 €. ¿Cuánto costarán 8 kg?",
       answer:16,
+      unit:"€",
       hint:"Proporcionalidad directa: más kilos, más dinero.",
       fact:"En Lanzarote se cultiva sobre picón volcánico para conservar mejor la humedad."
     },
     {
       island:"Fuerteventura 🧀",
       difficulty:"Fácil",
+      time:85,
       question:"4 cabras comen 20 kg de forraje. ¿Cuántos kg necesitan 10 cabras?",
       answer:50,
+      unit:"kg",
       hint:"Si aumentan las cabras, aumenta la comida.",
       fact:"El queso majorero es uno de los grandes orgullos de Canarias."
     },
     {
       island:"Gran Canaria 🚌",
       difficulty:"Fácil",
+      time:80,
       question:"Un grupo recorre 18 km en 3 horas a ritmo constante. ¿Cuántos km recorrerá en 5 horas?",
       answer:30,
+      unit:"km",
       hint:"Primero calcula cuántos km hace en 1 hora.",
       fact:"Aquí empiezan suaves, que luego viene la curva."
     },
     {
       island:"Tenerife 🎭",
       difficulty:"Media",
+      time:75,
       question:"Un disfraz cuesta 120 €. Si le hacen un 15 % de descuento, ¿cuánto dinero rebajan?",
       answer:18,
+      unit:"€",
       hint:"Calcula el 15 % de 120.",
       fact:"El Carnaval de Santa Cruz no baja el nivel, tú tampoco."
     },
     {
       island:"La Palma 🌋",
       difficulty:"Media",
+      time:75,
       question:"6 camiones tardan 10 días en limpiar una zona. ¿Cuántos camiones hacen falta para hacerlo en 4 días?",
       answer:15,
+      unit:"camiones",
       hint:"Menos días exige más camiones.",
       fact:"Aquí la proporcionalidad inversa entra con botas de trabajo."
     },
     {
       island:"La Gomera 🌿",
       difficulty:"Media",
+      time:72,
       question:"En un mapa, 2 cm representan 5 km. Si una ruta mide 6 cm, ¿cuántos km son en realidad?",
       answer:15,
+      unit:"km",
       hint:"Cada 2 cm son 5 km. Busca cuántos grupos de 2 hay en 6.",
       fact:"El silbo gomero llega lejos. Tus mates también deberían."
     },
     {
       island:"El Hierro ⚡",
       difficulty:"Media",
+      time:70,
       question:"Si 12 lápices cuestan 18 €, ¿cuánto cuestan 20 lápices?",
       answer:30,
+      unit:"€",
       hint:"Saca primero el precio de un lápiz.",
       fact:"Material escolar: inocente por fuera, tramposo por dentro."
     },
     {
       island:"La Graciosa 🚲",
       difficulty:"Media",
+      time:68,
       question:"8 cajas pesan 56 kg. ¿Cuánto pesan 15 cajas iguales?",
       answer:105,
+      unit:"kg",
       hint:"Peso por caja y luego multiplica.",
       fact:"Aquí el alumnado empieza a sospechar que las cajas no son amigas."
     },
     {
       island:"Tenerife 🏔️",
       difficulty:"Difícil",
+      time:65,
       question:"5 personas pagan 18 € cada una por una excursión. Si van 6 personas y el precio total es el mismo, ¿cuánto paga cada una?",
       answer:15,
+      unit:"€",
       hint:"Primero calcula el precio total, luego reparte.",
       fact:"Hasta el Teide parece más alto cuando toca pensar dos pasos."
     },
     {
       island:"Gran Canaria 📚",
       difficulty:"Difícil",
+      time:62,
       question:"Para fotocopiar un dossier, 8 impresoras iguales tardan 15 minutos. Si solo funcionan 5, ¿cuántos minutos tardarán?",
       answer:24,
+      unit:"minutos",
       hint:"Trabajo fijo: impresoras por tiempo se compensa.",
       fact:"Las impresoras siempre huelen el miedo."
     },
     {
       island:"Fuerteventura 🌬️",
       difficulty:"Difícil",
+      time:60,
       question:"9 sacos de pienso duran 12 días. ¿Cuántos días durarán 15 sacos al mismo ritmo?",
       answer:20,
+      unit:"días",
       hint:"Más sacos, más días.",
       fact:"Aquí ya no es 'qué bonito'; aquí ya hay oficio."
     },
     {
       island:"La Palma 🔥",
       difficulty:"Difícil",
+      time:58,
       question:"Un depósito se llena con 3 bombas en 12 horas. ¿Cuánto tardarán 4 bombas iguales?",
       answer:9,
+      unit:"horas",
       hint:"Más bombas, menos tiempo.",
       fact:"La proporcionalidad inversa siempre viene a liarla con educación."
     },
     {
       island:"La Gomera 🔥",
       difficulty:"Difícil",
+      time:55,
       question:"Un tren tarda 2 horas en recorrer 120 km. ¿Cuánto tardará en recorrer 300 km a la misma velocidad?",
       answer:5,
+      unit:"horas",
       hint:"Primero calcula la velocidad.",
       fact:"Aquí ya toca hilar fino y no responder a ojo alegre."
     },
     {
       island:"El Hierro 🧩",
       difficulty:"Difícil",
+      time:54,
       question:"Si 2 kg de queso cuestan 5 €, ¿cuánto cuestan 9 kg?",
       answer:22.5,
+      unit:"€",
       hint:"Calcula primero cuánto cuesta 1 kg.",
       fact:"Sí, ahora entran los decimales. Respira, no invoques a Pitágoras."
     },
     {
       island:"Lanzarote 📦",
       difficulty:"Experto",
+      time:52,
       question:"5 obreros hacen un trabajo en 8 días. ¿Cuántos días tardarán 10 obreros?",
       answer:4,
+      unit:"días",
       hint:"Más obreros, menos tiempo.",
       fact:"La inversa ya está aquí y no ha venido a saludar."
     },
     {
       island:"Fuerteventura 🐐",
       difficulty:"Experto",
+      time:50,
       question:"Una bomba extrae 240 litros en 6 minutos. ¿Cuántos litros extraerá en 15 minutos al mismo ritmo?",
       answer:600,
+      unit:"litros",
       hint:"Calcula litros por minuto.",
       fact:"Ya huele a examen, pero con banderita canaria."
     },
     {
       island:"Gran Canaria 🚢",
       difficulty:"Experto",
+      time:48,
       question:"7 bicicletas tardan 8 días en repartir material. ¿Cuántos días tardarán 14 bicicletas haciendo el mismo trabajo?",
       answer:4,
+      unit:"días",
       hint:"El doble de bicis, la mitad de tiempo.",
       fact:"Aquí ya deberían empezar a sentir respeto matemático."
     },
     {
       island:"Tenerife 🧠",
       difficulty:"Experto",
+      time:46,
       question:"5 turbinas producen una cantidad de energía en 12 horas. ¿Cuántas horas tardarán 2 turbinas en producir lo mismo?",
       answer:30,
+      unit:"horas",
       hint:"Menos máquinas tardan más tiempo.",
       fact:"Este problema no muerde, pero enseña los dientes."
     },
     {
       island:"La Palma 🧪",
       difficulty:"Experto",
+      time:45,
       question:"Un coche recorre 150 km en 3 horas. ¿Cuántos km recorrerá en 7 horas a velocidad constante?",
       answer:350,
+      unit:"km",
       hint:"Primero calcula cuántos km hace en 1 hora.",
       fact:"Aquí el que domina la razón unitaria va como un cohete."
     },
     {
       island:"Archipiélago Final 🏆",
       difficulty:"Jefa final",
+      time:45,
       question:"Si 4 operarios montan 12 mesas en 3 horas, ¿cuántas mesas montarán 6 operarios en 5 horas manteniendo el mismo ritmo?",
       answer:30,
+      unit:"mesas",
       hint:"Primero calcula cuántas mesas monta 1 operario en 1 hora.",
       fact:"Si han llegado aquí, ya no son alumnado: son supervivientes."
     }
   ];
 
-  // Registro + ranking
   const RANK_KEY = "archipielagoRanking";
   const studentNameInput = document.getElementById("studentName");
   const registerBtn = document.getElementById("registerBtn");
@@ -506,7 +519,6 @@
     saveRankData(data);
     renderRanking();
 
-    // Por si hay picaresca: vaciar el input para que no dejen el nombre guardado
     studentNameInput.value = "";
   }
 
@@ -575,23 +587,22 @@
 
   function startTimer() {
     clearInterval(timerId);
-    timeLeft = 90;
+    const level = levels[current];
+    timeLeft = level.time ?? 90;
     updateTopBar();
 
     timerId = setInterval(() => {
       timeLeft--;
       updateTopBar();
-
       if (timeLeft <= 0) {
         clearInterval(timerId);
-        loseLife("⏰ Se acabó el tiempo.", "Piensa con calma, pero no te vayas a vivir al problema.");
+        loseLife("⏰ Se acabó el tiempo.", "Piensa rápido (pero con cabeza).");
       }
     }, 1000);
   }
 
   function renderLevel() {
     updateTopBar();
-
     const level = levels[current];
     answeredCorrectly = false;
 
@@ -599,7 +610,7 @@
       <div class="tag">${level.island}</div>
       <div class="difficulty">${level.difficulty}</div>
       <div class="question">${level.question}</div>
-      <input id="ans" type="number" step="any" placeholder="Escribe tu respuesta..." />
+      <input id="ans" type="text" placeholder="ej: 30 ${level.unit}" />
       <button class="primary" id="checkBtn">Responder</button>
       <div id="feedbackBox"></div>
     `;
@@ -612,18 +623,81 @@
     startTimer();
   }
 
+  function formatAnswer(level) {
+    return Number(level.answer).toLocaleString("es-ES", {
+      maximumFractionDigits: 3
+    });
+  }
+
+  function difficultyBonus(level) {
+    const map = {
+      "Fácil": 2,
+      "Media": 5,
+      "Difícil": 9,
+      "Experto": 14,
+      "Jefa final": 18
+    };
+    return map[level.difficulty] || 0;
+  }
+
+  function sanitizeInput(raw, unit) {
+    let s = (raw ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+    // Comma decimal -> dot
+    s = s.replace(/,/g, ".");
+
+    // Remove spaces
+    s = s.replace(/\s+/g, "");
+
+    // Remove currency & common unit words
+    s = s
+      .replace(/€/g, "")
+      .replace(/eur(os)?/g, "")
+      .replace(/euro(s)?/g, "")
+      .replace(/kg/g, "")
+      .replace(/kilogram(o|os)?/g, "")
+      .replace(/km/g, "")
+      .replace(/kilometro(s)?/g, "")
+      .replace(/min(uto)?(s)?/g, "")
+      .replace(/hora(s)?/g, "")
+      .replace(/dia(s)?/g, "")
+      .replace(/mesa(s)?/g, "")
+      .replace(/camion(es)?/g, "")
+      .replace(/litro(s)?/g, "")
+      .replace(/porciento/g, "")
+      .replace(/%/g, "");
+
+    if (unit) {
+      const u = unit
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      if (u) {
+        s = s.replace(new RegExp(u.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"), "g"), "");
+      }
+    }
+
+    // Remove anything that's not number-ish
+    s = s.replace(/[^0-9.\-]/g, "");
+
+    return parseFloat(s);
+  }
+
   function checkAnswer() {
     if (answeredCorrectly) return;
 
     const level = levels[current];
-    const val = parseFloat(document.getElementById("ans").value);
+    const val = sanitizeInput(document.getElementById("ans").value, level.unit);
     const feedbackBox = document.getElementById("feedbackBox");
 
     if (isNaN(val)) {
       feedbackBox.innerHTML = `
         <div class="feedback incorrect">
-          Escribe un número válido.
-          <div class="hint">No me pongas jeroglíficos matemáticos ahora.</div>
+          Escribe una respuesta válida (número + unidad opcional).
+          <div class="hint">Ejemplos válidos: 30, 30 km, 22.5 €</div>
         </div>
       `;
       return;
@@ -632,13 +706,14 @@
     if (Math.abs(val - level.answer) < 0.001) {
       answeredCorrectly = true;
       clearInterval(timerId);
-      score += 10 + timeLeft;
+      score += 10 + timeLeft + difficultyBonus(level);
       playSound("correct");
       updateTopBar();
 
       feedbackBox.innerHTML = `
         <div class="feedback correct">
-          ✔ Correcto. Has conquistado la isla.
+          ✔ Correcto. Has conquistado la isla.<br>
+          Solución: <strong>${formatAnswer(level)} ${level.unit}</strong>
         </div>
         <div class="fact">${level.fact}</div>
         <button class="secondary" id="nextBtn">Siguiente nivel</button>
@@ -684,7 +759,6 @@
 
   function showGameOver() {
     clearInterval(timerId);
-    // Guarda mejor puntuación si hay nombre
     saveBestScoreFromUI(score);
 
     app.innerHTML = `
@@ -702,14 +776,13 @@
     clearInterval(timerId);
     progressBar.style.width = "100%";
 
-    // Guarda mejor puntuación si hay nombre
     saveBestScoreFromUI(score);
 
     app.innerHTML = `
       <div class="final">
         <div class="big">🏆</div>
         <h2>¡Archipiélago completado!</h2>
-        <p>Has superado los 20 problemas.</p>
+        <p>Has superado los ${levels.length} problemas.</p>
         <p>Puntuación final: <strong>${score}</strong></p>
         <button class="restart" onclick="restartGame()">Volver a jugar</button>
       </div>
@@ -730,7 +803,6 @@
     muteBtn.textContent = muted ? "🔇" : "🔊";
   });
 
-  // Arranca ranking + juego
   renderRanking();
   renderLevel();
 </script>
