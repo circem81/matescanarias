@@ -98,6 +98,24 @@
       padding: 24px;
     }
 
+    .panel {
+      border-top: 1px solid #eef2f7;
+      padding-top: 12px;
+      padding-bottom: 0;
+    }
+
+    .panel h3 {
+      margin: 0 0 10px 0;
+      color: #004477;
+    }
+
+    .panel small {
+      color: #6b7280;
+      display: block;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
     .tag {
       display: inline-block;
       padding: 8px 14px;
@@ -237,6 +255,19 @@
 
   <div class="progress-wrap">
     <div id="progressBar" class="progress"></div>
+  </div>
+
+  <!-- Registro + ranking -->
+  <div id="registerBox" class="content panel">
+    <h3>Registro del alumnado</h3>
+    <input id="studentName" type="text" placeholder="Nombre (o apodo) para ranking" />
+    <button id="registerBtn" class="secondary">Entrar</button>
+    <small>Consejo: entra antes de jugar si quieres que te cuente el registro. Si no, luego no digas que no avisamos 😄</small>
+  </div>
+
+  <div id="rankingBox" class="content panel">
+    <h3>Ranking</h3>
+    <ol id="rankingList"></ol>
   </div>
 
   <div id="app" class="content"></div>
@@ -406,6 +437,102 @@
     }
   ];
 
+  // Registro + ranking
+  const RANK_KEY = "archipielagoRanking";
+  const studentNameInput = document.getElementById("studentName");
+  const registerBtn = document.getElementById("registerBtn");
+  const rankingList = document.getElementById("rankingList");
+
+  function getRankData() {
+    try {
+      return JSON.parse(localStorage.getItem(RANK_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  }
+
+  function saveRankData(data) {
+    localStorage.setItem(RANK_KEY, JSON.stringify(data));
+  }
+
+  function renderRanking() {
+    const data = getRankData();
+    const sorted = Object.entries(data)
+      .map(([name, info]) => ({
+        name,
+        bestScore: info?.bestScore ?? 0,
+        connections: info?.connections ?? 0,
+        lastConnection: info?.lastConnection ?? ""
+      }))
+      .sort((a, b) => {
+        if (b.bestScore !== a.bestScore) return b.bestScore - a.bestScore;
+        return b.connections - a.connections;
+      });
+
+    rankingList.innerHTML = "";
+
+    if (sorted.length === 0) {
+      rankingList.innerHTML = "<li>Aún no hay registros.</li>";
+      return;
+    }
+
+    sorted.forEach((r, index) => {
+      let medal = "";
+      if (index === 0) medal = "🥇 ";
+      else if (index === 1) medal = "🥈 ";
+      else if (index === 2) medal = "🥉 ";
+
+      const li = document.createElement("li");
+      li.innerHTML = `${medal}<strong>${r.name}</strong> — mejor puntuación: <strong>${r.bestScore}</strong> | conexiones: ${r.connections}`;
+      rankingList.appendChild(li);
+    });
+  }
+
+  function registerConnection() {
+    const name = studentNameInput.value.trim();
+    if (!name) {
+      alert("Pon un nombre (o apodo) para el ranking.");
+      return;
+    }
+
+    const data = getRankData();
+    if (!data[name]) {
+      data[name] = { bestScore: 0, connections: 0, lastConnection: "" };
+    }
+
+    data[name].connections = (data[name].connections ?? 0) + 1;
+    data[name].lastConnection = new Date().toLocaleString("es-ES");
+
+    saveRankData(data);
+    renderRanking();
+
+    // Por si hay picaresca: vaciar el input para que no dejen el nombre guardado
+    studentNameInput.value = "";
+  }
+
+  function saveBestScoreFromUI(score) {
+    const nameField = document.getElementById("studentName");
+    if (!nameField) return;
+
+    const name = nameField.value.trim();
+    if (!name) return;
+
+    const data = getRankData();
+    if (!data[name]) data[name] = { bestScore: 0, connections: 0, lastConnection: "" };
+
+    if ((data[name].bestScore ?? 0) < score) {
+      data[name].bestScore = score;
+      data[name].lastConnection = new Date().toLocaleString("es-ES");
+      saveRankData(data);
+      renderRanking();
+    }
+  }
+
+  registerBtn.addEventListener("click", registerConnection);
+  studentNameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") registerConnection();
+  });
+
   const sounds = {
     correct: new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'),
     incorrect: new Audio('https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3'),
@@ -557,6 +684,9 @@
 
   function showGameOver() {
     clearInterval(timerId);
+    // Guarda mejor puntuación si hay nombre
+    saveBestScoreFromUI(score);
+
     app.innerHTML = `
       <div class="final">
         <div class="big">💀</div>
@@ -571,6 +701,10 @@
   function showVictory() {
     clearInterval(timerId);
     progressBar.style.width = "100%";
+
+    // Guarda mejor puntuación si hay nombre
+    saveBestScoreFromUI(score);
+
     app.innerHTML = `
       <div class="final">
         <div class="big">🏆</div>
@@ -596,6 +730,8 @@
     muteBtn.textContent = muted ? "🔇" : "🔊";
   });
 
+  // Arranca ranking + juego
+  renderRanking();
   renderLevel();
 </script>
 
