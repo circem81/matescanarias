@@ -1,811 +1,436 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ruta Archipiélago 🇮🇨</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #eaf7ff 0%, #dff2ff 100%);
-      color: #1f2937;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 680px;
-      background: #fff;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-      border-top: 10px solid #004477;
-      border-bottom: 10px solid #ffd700;
-    }
-
-    .header {
-      padding: 24px;
-      text-align: center;
-      border-bottom: 1px solid #eef2f7;
-      position: relative;
-    }
-
-    .mute-btn {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      border: none;
-      background: #f3f4f6;
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    h1 {
-      margin: 0;
-      color: #004477;
-      font-size: 32px;
-    }
-
-    .subtitle {
-      margin-top: 8px;
-      color: #6b7280;
-      font-weight: bold;
-    }
-
-    .top-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 16px 24px 8px;
-      font-weight: bold;
-      color: #004477;
-      text-align: center;
-    }
-
-    .stat {
-      background: #f8fbff;
-      border: 1px solid #e5eef7;
-      border-radius: 14px;
-      padding: 10px;
-    }
-
-    .progress-wrap {
-      width: calc(100% - 48px);
-      margin: 8px 24px 0;
-      height: 12px;
-      background: #eef2f7;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #ffd700, #ffbf00);
-      transition: width 0.35s ease;
-    }
-
-    .content { padding: 24px; }
-
-    .panel {
-      border-top: 1px solid #eef2f7;
-      padding-top: 12px;
-      padding-bottom: 0;
-    }
-
-    .panel h3 {
-      margin: 0 0 10px 0;
-      color: #004477;
-    }
-
-    .panel small {
-      color: #6b7280;
-      display: block;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 8px 14px;
-      background: #dff3ff;
-      color: #005b82;
-      border-radius: 999px;
-      font-weight: bold;
-      margin-bottom: 18px;
-    }
-
-    .difficulty {
-      float: right;
-      background: #fff4cc;
-      color: #8a6200;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 18px;
-    }
-
-    .question {
-      font-size: 22px;
-      margin-bottom: 20px;
-      font-weight: 600;
-      line-height: 1.4;
-      clear: both;
-    }
-
-    input {
-      width: 100%;
-      padding: 16px;
-      font-size: 18px;
-      border-radius: 16px;
-      border: 2px solid #d1d5db;
-      margin-bottom: 12px;
-      outline: none;
-    }
-
-    input:focus { border-color: #004477; }
-
-    button {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.05s ease, opacity 0.2s ease;
-    }
-
-    button:active { transform: scale(0.99); }
-
-    .primary { background: #004477; color: white; }
-    .secondary { background: #059669; color: white; margin-top: 10px; }
-    .restart { background: #004477; color: white; margin-top: 16px; }
-
-    .feedback {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 14px;
-      font-weight: bold;
-      line-height: 1.4;
-    }
-
-    .correct {
-      background: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-    }
-
-    .incorrect {
-      background: #fef2f2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-    }
-
-    .hint { margin-top: 8px; font-size: 14px; font-weight: normal; font-style: italic; }
-
-    .fact {
-      margin-top: 14px;
-      background: #fffbeb;
-      border-left: 5px solid #f59e0b;
-      padding: 12px 14px;
-      border-radius: 0 12px 12px 0;
-      color: #7c5200;
-      line-length: 1.5;
-    }
-
-    .final { text-align: center; padding: 12px 0; }
-
-    .final h2 { font-size: 30px; color: #004477; margin-bottom: 10px; }
-
-    .final p { font-size: 18px; line-height: 1.5; color: #374151; }
-
-    .big { font-size: 60px; margin-bottom: 8px; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Newton · Proporcionalidad · V3 (2º ESO)</title>
+<style>
+:root{
+  --border:rgba(0,0,0,.06);
+  --accent:#0070f3;--good:#0b8a42;--bad:#c62828;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:system-ui,Arial,sans-serif;
+  background:#f3f8ff;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+}
+.card{width:min(980px,100%);background:#fff;border-radius:22px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);overflow:hidden;}
+.header{padding:16px;border-bottom:1px solid var(--border)}
+h1{margin:0;font-size:18px}
+p.small{margin:6px 0 0;font-size:13px;opacity:.75}
+.topbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;padding:12px;border-bottom:1px solid var(--border)}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+select,button,input{padding:8px 10px;border-radius:10px;border:1px solid rgba(0,0,0,.12)}
+button.primary{background:var(--accent);color:#fff;border:none}
+main{padding:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab{background:#fff;border:1px solid var(--border);cursor:pointer}
+.tab.active{border-color:var(--accent);color:var(--accent);font-weight:700}
+.phase{display:none}
+.phase.active{display:block}
+.section{border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px}
+.section h2{margin:0 0 8px 0;font-size:14px}
+.notice{margin-top:8px;padding:10px;border-radius:12px;font-size:13px;border:1px solid var(--border);background:#fff}
+.notice.good{background:#e9f6ee;border-color:#b7e1c6}
+.notice.bad{background:#fdecea;border-color:#f3b9b2}
+.pieces{display:flex;gap:8px;flex-wrap:wrap}
+.piece{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,112,243,.09);border:1px solid rgba(0,112,243,.2);cursor:pointer}
+small{opacity:.75}
+</style>
 </head>
 <body>
-
 <div class="card">
   <div class="header">
-    <button id="muteBtn" class="mute-btn">🔊</button>
-    <h1>Ruta Archipiélago 🇮🇨</h1>
-    <div id="subtitle" class="subtitle"></div>
+    <h1>Newton · Proporcionalidad · V3</h1>
+    <p class="small">Centro: Tamogante · Curso: 2º ESO · Ruta guiada/libre + evaluación por fases</p>
   </div>
 
-  <div class="top-stats">
-    <div class="stat">❤️ Vidas: <span id="lives">3</span></div>
-    <div class="stat">🏆 Puntos: <span id="score">0</span></div>
-    <div class="stat">⏱️ Tiempo: <span id="timer">90</span></div>
+  <div class="topbar">
+    <div class="controls">
+      <select id="topic">
+        <option value="mix">Mezcla</option>
+        <option value="arith_direct">Directa aritmética</option>
+        <option value="arith_inverse">Inversa aritmética</option>
+        <option value="geo_direct">Directa geométrica</option>
+        <option value="geo_inverse">Inversa geométrica</option>
+      </select>
+      <select id="level">
+        <option value="1">Nivel 1</option>
+        <option value="2">Nivel 2</option>
+        <option value="3">Nivel 3</option>
+      </select>
+      <select id="route">
+        <option value="guided">Ruta guiada</option>
+        <option value="free">Ruta libre</option>
+      </select>
+      <select id="method">
+        <option value="esquema">Esquema de datos</option>
+        <option value="manip">Manipulativa</option>
+        <option value="ensayo">Ensayo-error</option>
+      </select>
+      <button id="new" class="primary">Nuevo problema</button>
+    </div>
+
+    <div class="controls">
+      <small>Puntos: <span id="points">0</span> · Mejor: <span id="best">0</span> · Tiempo: <span id="time">00:00</span></small>
+    </div>
   </div>
 
-  <div class="progress-wrap">
-    <div id="progressBar" class="progress"></div>
-  </div>
+  <main>
+    <div class="tabs">
+      <button class="tab active" data-phase="1">Fase 1 · Comprender</button>
+      <button class="tab" data-phase="2">Fase 2 · Representar</button>
+      <button class="tab" data-phase="3">Fase 3 · Ejecutar</button>
+    </div>
 
-  <div id="registerBox" class="content panel">
-    <h3>Registro del alumnado</h3>
-    <input id="studentName" type="text" placeholder="Nombre (o apodo) para ranking" />
-    <button id="registerBtn" class="secondary">Entrar</button>
-    <small>Consejo: entra antes de jugar si quieres que te cuente el registro.</small>
-  </div>
+    <!-- Fase 1 -->
+    <div id="phase1" class="phase active">
+      <div class="section">
+        <h2>Enunciado</h2>
+        <div id="q" style="font-weight:600"></div>
+        <div id="phase1Notice" class="notice"></div>
+      </div>
 
-  <div id="rankingBox" class="content panel">
-    <h3>Ranking</h3>
-    <ol id="rankingList"></ol>
-  </div>
+      <div class="section">
+        <h2>Evaluación Fase 1 (si es guiada)</h2>
+        <div id="f1Guided" style="display:none">
+          <label>Magnitud 1:</label>
+          <input id="f1m1" placeholder="ej: camisetas / equipos" style="width:100%">
+          <label>Magnitud 2:</label>
+          <input id="f1m2" placeholder="ej: euros / días" style="width:100%">
+          <label>Relación:</label>
+          <input id="f1rel" placeholder="directa / inversa" style="width:100%">
+          <button id="f1Check" style="margin-top:10px">Comprobar Fase 1</button>
+          <div id="f1fb" class="notice" style="display:none"></div>
+        </div>
+        <div id="f1Free" class="notice">
+          Ruta libre: apunta lo importante (magnitudes + directa/inversa). Si se equivoca, no pasa nada: se corrige, se aprende.
+        </div>
+      </div>
+    </div>
 
-  <div id="app" class="content"></div>
+    <!-- Fase 2 -->
+    <div id="phase2" class="phase">
+      <div class="section">
+        <h2>Representación</h2>
+        <div id="schema" class="notice" style="display:none"></div>
+        <div id="f2Guided" style="display:none">
+          <label>Completa el factor o la constante:</label>
+          <input id="f2Rule" placeholder="ej: constante: equipos*días" style="width:100%">
+          <button id="f2Check" style="margin-top:10px">Comprobar Fase 2</button>
+          <div id="f2fb" class="notice" style="display:none"></div>
+        </div>
+        <div id="f2Free" class="notice">
+          Ruta libre: dibuja tabla proporciones o escribe el factor. La representación vale tanto como el cálculo.
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Manipulativa (si procede)</h2>
+        <div id="manipExplain" class="notice" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Fase 3 -->
+    <div id="phase3" class="phase">
+      <div class="section">
+        <h2>Ejecutar</h2>
+
+        <div id="manipZone" style="display:none">
+          <div><strong>Piezas:</strong></div>
+          <div id="pieces" class="pieces"></div>
+          <p style="margin:8px 0 0;font-size:13px">Total montado: <span id="total">0</span></p>
+          <button id="resetPieces" style="margin-top:8px">Reset piezas</button>
+        </div>
+
+        <label id="answerLabel" style="display:block;margin-top:10px">Respuesta final:</label>
+        <input id="answer" type="text" placeholder="Número... (acepta 30€, 30 m, 22.5)" style="width:100%">
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button id="check" class="primary" style="flex:1">Comprobar</button>
+          <button id="skip" style="flex:1">Pasar</button>
+        </div>
+        <div id="feedback" class="notice" style="display:none"></div>
+      </div>
+    </div>
+  </main>
 </div>
 
 <script>
-  const levels = [
-    {
-      island:"Lanzarote 🌵",
-      difficulty:"Fácil",
-      time:85,
-      question:"3 kg de papas cuestan 6 €. ¿Cuánto costarán 8 kg?",
-      answer:16,
-      unit:"€",
-      hint:"Proporcionalidad directa: más kilos, más dinero.",
-      fact:"En Lanzarote se cultiva sobre picón volcánico para conservar mejor la humedad."
-    },
-    {
-      island:"Fuerteventura 🧀",
-      difficulty:"Fácil",
-      time:85,
-      question:"4 cabras comen 20 kg de forraje. ¿Cuántos kg necesitan 10 cabras?",
-      answer:50,
-      unit:"kg",
-      hint:"Si aumentan las cabras, aumenta la comida.",
-      fact:"El queso majorero es uno de los grandes orgullos de Canarias."
-    },
-    {
-      island:"Gran Canaria 🚌",
-      difficulty:"Fácil",
-      time:80,
-      question:"Un grupo recorre 18 km en 3 horas a ritmo constante. ¿Cuántos km recorrerá en 5 horas?",
-      answer:30,
-      unit:"km",
-      hint:"Primero calcula cuántos km hace en 1 hora.",
-      fact:"Aquí empiezan suaves, que luego viene la curva."
-    },
-    {
-      island:"Tenerife 🎭",
-      difficulty:"Media",
-      time:75,
-      question:"Un disfraz cuesta 120 €. Si le hacen un 15 % de descuento, ¿cuánto dinero rebajan?",
-      answer:18,
-      unit:"€",
-      hint:"Calcula el 15 % de 120.",
-      fact:"El Carnaval de Santa Cruz no baja el nivel, tú tampoco."
-    },
-    {
-      island:"La Palma 🌋",
-      difficulty:"Media",
-      time:75,
-      question:"6 camiones tardan 10 días en limpiar una zona. ¿Cuántos camiones hacen falta para hacerlo en 4 días?",
-      answer:15,
-      unit:"camiones",
-      hint:"Menos días exige más camiones.",
-      fact:"Aquí la proporcionalidad inversa entra con botas de trabajo."
-    },
-    {
-      island:"La Gomera 🌿",
-      difficulty:"Media",
-      time:72,
-      question:"En un mapa, 2 cm representan 5 km. Si una ruta mide 6 cm, ¿cuántos km son en realidad?",
-      answer:15,
-      unit:"km",
-      hint:"Cada 2 cm son 5 km. Busca cuántos grupos de 2 hay en 6.",
-      fact:"El silbo gomero llega lejos. Tus mates también deberían."
-    },
-    {
-      island:"El Hierro ⚡",
-      difficulty:"Media",
-      time:70,
-      question:"Si 12 lápices cuestan 18 €, ¿cuánto cuestan 20 lápices?",
-      answer:30,
-      unit:"€",
-      hint:"Saca primero el precio de un lápiz.",
-      fact:"Material escolar: inocente por fuera, tramposo por dentro."
-    },
-    {
-      island:"La Graciosa 🚲",
-      difficulty:"Media",
-      time:68,
-      question:"8 cajas pesan 56 kg. ¿Cuánto pesan 15 cajas iguales?",
-      answer:105,
-      unit:"kg",
-      hint:"Peso por caja y luego multiplica.",
-      fact:"Aquí el alumnado empieza a sospechar que las cajas no son amigas."
-    },
-    {
-      island:"Tenerife 🏔️",
-      difficulty:"Difícil",
-      time:65,
-      question:"5 personas pagan 18 € cada una por una excursión. Si van 6 personas y el precio total es el mismo, ¿cuánto paga cada una?",
-      answer:15,
-      unit:"€",
-      hint:"Primero calcula el precio total, luego reparte.",
-      fact:"Hasta el Teide parece más alto cuando toca pensar dos pasos."
-    },
-    {
-      island:"Gran Canaria 📚",
-      difficulty:"Difícil",
-      time:62,
-      question:"Para fotocopiar un dossier, 8 impresoras iguales tardan 15 minutos. Si solo funcionan 5, ¿cuántos minutos tardarán?",
-      answer:24,
-      unit:"minutos",
-      hint:"Trabajo fijo: impresoras por tiempo se compensa.",
-      fact:"Las impresoras siempre huelen el miedo."
-    },
-    {
-      island:"Fuerteventura 🌬️",
-      difficulty:"Difícil",
-      time:60,
-      question:"9 sacos de pienso duran 12 días. ¿Cuántos días durarán 15 sacos al mismo ritmo?",
-      answer:20,
-      unit:"días",
-      hint:"Más sacos, más días.",
-      fact:"Aquí ya no es 'qué bonito'; aquí ya hay oficio."
-    },
-    {
-      island:"La Palma 🔥",
-      difficulty:"Difícil",
-      time:58,
-      question:"Un depósito se llena con 3 bombas en 12 horas. ¿Cuánto tardarán 4 bombas iguales?",
-      answer:9,
-      unit:"horas",
-      hint:"Más bombas, menos tiempo.",
-      fact:"La proporcionalidad inversa siempre viene a liarla con educación."
-    },
-    {
-      island:"La Gomera 🔥",
-      difficulty:"Difícil",
-      time:55,
-      question:"Un tren tarda 2 horas en recorrer 120 km. ¿Cuánto tardará en recorrer 300 km a la misma velocidad?",
-      answer:5,
-      unit:"horas",
-      hint:"Primero calcula la velocidad.",
-      fact:"Aquí ya toca hilar fino y no responder a ojo alegre."
-    },
-    {
-      island:"El Hierro 🧩",
-      difficulty:"Difícil",
-      time:54,
-      question:"Si 2 kg de queso cuestan 5 €, ¿cuánto cuestan 9 kg?",
-      answer:22.5,
-      unit:"€",
-      hint:"Calcula primero cuánto cuesta 1 kg.",
-      fact:"Sí, ahora entran los decimales. Respira, no invoques a Pitágoras."
-    },
-    {
-      island:"Lanzarote 📦",
-      difficulty:"Experto",
-      time:52,
-      question:"5 obreros hacen un trabajo en 8 días. ¿Cuántos días tardarán 10 obreros?",
-      answer:4,
-      unit:"días",
-      hint:"Más obreros, menos tiempo.",
-      fact:"La inversa ya está aquí y no ha venido a saludar."
-    },
-    {
-      island:"Fuerteventura 🐐",
-      difficulty:"Experto",
-      time:50,
-      question:"Una bomba extrae 240 litros en 6 minutos. ¿Cuántos litros extraerá en 15 minutos al mismo ritmo?",
-      answer:600,
-      unit:"litros",
-      hint:"Calcula litros por minuto.",
-      fact:"Ya huele a examen, pero con banderita canaria."
-    },
-    {
-      island:"Gran Canaria 🚢",
-      difficulty:"Experto",
-      time:48,
-      question:"7 bicicletas tardan 8 días en repartir material. ¿Cuántos días tardarán 14 bicicletas haciendo el mismo trabajo?",
-      answer:4,
-      unit:"días",
-      hint:"El doble de bicis, la mitad de tiempo.",
-      fact:"Aquí ya deberían empezar a sentir respeto matemático."
-    },
-    {
-      island:"Tenerife 🧠",
-      difficulty:"Experto",
-      time:46,
-      question:"5 turbinas producen una cantidad de energía en 12 horas. ¿Cuántas horas tardarán 2 turbinas en producir lo mismo?",
-      answer:30,
-      unit:"horas",
-      hint:"Menos máquinas tardan más tiempo.",
-      fact:"Este problema no muerde, pero enseña los dientes."
-    },
-    {
-      island:"La Palma 🧪",
-      difficulty:"Experto",
-      time:45,
-      question:"Un coche recorre 150 km en 3 horas. ¿Cuántos km recorrerá en 7 horas a velocidad constante?",
-      answer:350,
-      unit:"km",
-      hint:"Primero calcula cuántos km hace en 1 hora.",
-      fact:"Aquí el que domina la razón unitaria va como un cohete."
-    },
-    {
-      island:"Archipiélago Final 🏆",
-      difficulty:"Jefa final",
-      time:45,
-      question:"Si 4 operarios montan 12 mesas en 3 horas, ¿cuántas mesas montarán 6 operarios en 5 horas manteniendo el mismo ritmo?",
-      answer:30,
-      unit:"mesas",
-      hint:"Primero calcula cuántas mesas monta 1 operario en 1 hora.",
-      fact:"Si han llegado aquí, ya no son alumnado: son supervivientes."
-    }
-  ];
+const el=(id)=>document.getElementById(id);
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const fmt=(n)=>Number(n.toFixed(2)).toString();
+const parseNum=(v)=>parseFloat((v||"").replace(",","."));
+const BEST_KEY="newton_phase_best_v3";
+let points=0, best=Number(localStorage.getItem(BEST_KEY)||0);
+let timer=null, elapsed=0;
+let current=null;
 
-  const RANK_KEY = "archipielagoRanking";
-  const studentNameInput = document.getElementById("studentName");
-  const registerBtn = document.getElementById("registerBtn");
-  const rankingList = document.getElementById("rankingList");
-
-  function getRankData() {
-    try {
-      return JSON.parse(localStorage.getItem(RANK_KEY) || "{}");
-    } catch {
-      return {};
-    }
-  }
-
-  function saveRankData(data) {
-    localStorage.setItem(RANK_KEY, JSON.stringify(data));
-  }
-
-  function renderRanking() {
-    const data = getRankData();
-    const sorted = Object.entries(data)
-      .map(([name, info]) => ({
-        name,
-        bestScore: info?.bestScore ?? 0,
-        connections: info?.connections ?? 0,
-        lastConnection: info?.lastConnection ?? ""
-      }))
-      .sort((a, b) => {
-        if (b.bestScore !== a.bestScore) return b.bestScore - a.bestScore;
-        return b.connections - a.connections;
-      });
-
-    rankingList.innerHTML = "";
-
-    if (sorted.length === 0) {
-      rankingList.innerHTML = "<li>Aún no hay registros.</li>";
-      return;
-    }
-
-    sorted.forEach((r, index) => {
-      let medal = "";
-      if (index === 0) medal = "🥇 ";
-      else if (index === 1) medal = "🥈 ";
-      else if (index === 2) medal = "🥉 ";
-
-      const li = document.createElement("li");
-      li.innerHTML = `${medal}<strong>${r.name}</strong> — mejor puntuación: <strong>${r.bestScore}</strong> | conexiones: ${r.connections}`;
-      rankingList.appendChild(li);
-    });
-  }
-
-  function registerConnection() {
-    const name = studentNameInput.value.trim();
-    if (!name) {
-      alert("Pon un nombre (o apodo) para el ranking.");
-      return;
-    }
-
-    const data = getRankData();
-    if (!data[name]) {
-      data[name] = { bestScore: 0, connections: 0, lastConnection: "" };
-    }
-
-    data[name].connections = (data[name].connections ?? 0) + 1;
-    data[name].lastConnection = new Date().toLocaleString("es-ES");
-
-    saveRankData(data);
-    renderRanking();
-
-    studentNameInput.value = "";
-  }
-
-  function saveBestScoreFromUI(score) {
-    const nameField = document.getElementById("studentName");
-    if (!nameField) return;
-
-    const name = nameField.value.trim();
-    if (!name) return;
-
-    const data = getRankData();
-    if (!data[name]) data[name] = { bestScore: 0, connections: 0, lastConnection: "" };
-
-    if ((data[name].bestScore ?? 0) < score) {
-      data[name].bestScore = score;
-      data[name].lastConnection = new Date().toLocaleString("es-ES");
-      saveRankData(data);
-      renderRanking();
-    }
-  }
-
-  registerBtn.addEventListener("click", registerConnection);
-  studentNameInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") registerConnection();
+function showTabs(active){
+  document.querySelectorAll(".tab").forEach(b=>{
+    b.classList.toggle("active", b.dataset.phase===String(active));
   });
+  [1,2,3].forEach(p=>{
+    el(`phase${p}`).classList.toggle("active", p===active);
+  });
+}
 
-  const sounds = {
-    correct: new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'),
-    incorrect: new Audio('https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3'),
-    next: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3')
+function setTimer(){
+  clearInterval(timer);elapsed=0;
+  el("time").textContent="00:00";
+  timer=setInterval(()=>{
+    elapsed++;
+    const m=String(Math.floor(elapsed/60)).padStart(2,"0");
+    const s=String(elapsed%60).padStart(2,"0");
+    el("time").textContent=`${m}:${s}`;
+  },1000);
+}
+
+function scoreAdd(){
+  return Math.max(5,22-Math.floor(elapsed/12));
+}
+
+function setGuided(show){
+  el("f1Guided").style.display=show?"":"none";
+  el("f1Free").style.display=show?"none":"";
+  el("f2Guided").style.display=show?"":"none";
+  el("f2Free").style.display=show?"none":"";
+}
+
+function humanRel(){
+  return current.topic.includes("inversa")?"inversa":"directa";
+}
+
+function genDirectArith(level){
+  const unit = rand(0,1) ? "€" : "km";
+  const m1 = unit==="€"?"unidades":"horas";
+  const m2 = unit;
+  const a=rand(3,4+level*2);
+  const b=rand(10,20+level*10);
+  const target=rand(a+1,a+4+level*2);
+  const ans=target*(b/a);
+  return {
+    topic:"directa aritmética",
+    m1,m2,
+    q:`Si ${a} ${m1} valen ${b} ${unit}, ¿cuánto valdrán ${target} ${m1}?`,
+    ans, unit,
+    schema:[
+      `Magnitud 1: ${m1}`,
+      `Magnitud 2: ${unit}`,
+      "Relación: directa (multiplico por el mismo factor)"
+    ],
+    rule:"factor: (b/a)"
   };
+}
 
-  let current = 0;
-  let score = 0;
-  let lives = 3;
-  let muted = false;
-  let answeredCorrectly = false;
-  let timeLeft = 90;
-  let timerId = null;
+function genInverseArith(level){
+  const workers=rand(2,4+level*2);
+  const days=rand(4,8+level*3);
+  const target=rand(workers+1,workers+3+level*2);
+  const ans=(workers*days)/target;
+  return {
+    topic:"inversa aritmética",
+    m1:"equipos",
+    m2:"días",
+    q:`${workers} equipos terminan una tarea en ${days} días. ¿Cuántos días tardan ${target} equipos?`,
+    ans, unit:"días",
+    schema:[
+      "Magnitud 1: equipos",
+      "Magnitud 2: días",
+      "Relación: inversa (constante: equipos·días)"
+    ],
+    rule:"constante: equipos*días"
+  };
+}
 
-  const app = document.getElementById("app");
-  const subtitle = document.getElementById("subtitle");
-  const progressBar = document.getElementById("progressBar");
-  const livesEl = document.getElementById("lives");
-  const scoreEl = document.getElementById("score");
-  const timerEl = document.getElementById("timer");
-  const muteBtn = document.getElementById("muteBtn");
+function genDirectGeo(level){
+  const scales=[2000,5000,10000,25000];
+  const scale=scales[Math.min(scales.length-1, level)];
+  const cm=rand(2,6+level*3);
+  const ans=(cm*scale)/100;
+  return {
+    topic:"directa geométrica",
+    m1:"cm plano",
+    m2:"m reales",
+    q:`Escala 1:${scale}. En el plano hay ${cm} cm. ¿Cuántos metros reales son?`,
+    ans, unit:"m",
+    schema:[
+      `1 cm plano -> ${scale} cm reales`,
+      "Directa: multiplico por escala y convierto cm a m",
+      "Regla: m = cm·escala/100"
+    ],
+    rule:"regla: cm*escala/100"
+  };
+}
 
-  function playSound(name) {
-    if (muted) return;
-    const audio = sounds[name];
-    if (!audio) return;
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
-  }
-
-  function updateTopBar() {
-    livesEl.textContent = lives;
-    scoreEl.textContent = score;
-    timerEl.textContent = timeLeft;
-    progressBar.style.width = ((current / levels.length) * 100) + "%";
-    subtitle.textContent = current < levels.length
-      ? `Nivel ${current + 1} de ${levels.length}`
-      : "Final";
-  }
-
-  function startTimer() {
-    clearInterval(timerId);
-    const level = levels[current];
-    timeLeft = level.time ?? 90;
-    updateTopBar();
-
-    timerId = setInterval(() => {
-      timeLeft--;
-      updateTopBar();
-      if (timeLeft <= 0) {
-        clearInterval(timerId);
-        loseLife("⏰ Se acabó el tiempo.", "Piensa rápido (pero con cabeza).");
-      }
-    }, 1000);
-  }
-
-  function renderLevel() {
-    updateTopBar();
-    const level = levels[current];
-    answeredCorrectly = false;
-
-    app.innerHTML = `
-      <div class="tag">${level.island}</div>
-      <div class="difficulty">${level.difficulty}</div>
-      <div class="question">${level.question}</div>
-      <input id="ans" type="text" placeholder="ej: 30 ${level.unit}" />
-      <button class="primary" id="checkBtn">Responder</button>
-      <div id="feedbackBox"></div>
-    `;
-
-    document.getElementById("checkBtn").addEventListener("click", checkAnswer);
-    document.getElementById("ans").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") checkAnswer();
-    });
-
-    startTimer();
-  }
-
-  function formatAnswer(level) {
-    return Number(level.answer).toLocaleString("es-ES", {
-      maximumFractionDigits: 3
-    });
-  }
-
-  function difficultyBonus(level) {
-    const map = {
-      "Fácil": 2,
-      "Media": 5,
-      "Difícil": 9,
-      "Experto": 14,
-      "Jefa final": 18
+function genInverseGeo(level){
+  const base=rand(2,4+level);
+  const cube = rand(0,1)===1 && level>=2;
+  if(cube){
+    const edge=base, vol=edge**3;
+    const factor=rand(2,2+level);
+    const targetVol=vol*factor;
+    const ans=Math.cbrt(targetVol);
+    return {
+      topic:"inversa geométrica",
+      m1:"m³",
+      m2:"m",
+      q:`Un cubo tiene volumen ${vol} m³. Si el volumen pasa a ${targetVol} m³, ¿cuál es la arista?`,
+      ans, unit:"m",
+      schema:[
+        "Relación: V = a³",
+        "Inversa con potencia: a = ∛V",
+        "Factor en arista = ∛(factor en volumen)"
+      ],
+      rule:"a = ∛V"
     };
-    return map[level.difficulty] || 0;
+  }else{
+    const side=base, area=side**2;
+    const factor=rand(2,2+level);
+    const targetArea=area*factor;
+    const ans=Math.sqrt(targetArea);
+    return {
+      topic:"inversa geométrica",
+      m1:"cm²",
+      m2:"cm",
+      q:`Un cuadrado tiene área ${area} cm². Si el área pasa a ${targetArea} cm², ¿cuánto mide el lado?`,
+      ans, unit:"cm",
+      schema:[
+        "Relación: A = L²",
+        "Inversa con potencia: L = √A",
+        "Factor en L = √(factor en A)"
+      ],
+      rule:"L = √A"
+    };
+  }
+}
+
+const generators={
+  arith_direct:genDirectArith,
+  arith_inverse:genInverseArith,
+  geo_direct:genDirectGeo,
+  geo_inverse:genInverseGeo
+};
+
+function buildProblem(){
+  let topic=el("topic").value;
+  const level=Number(el("level").value);
+  if(topic==="mix"){
+    const keys=Object.keys(generators);
+    topic=keys[rand(0,keys.length-1)];
   }
 
-  function sanitizeInput(raw, unit) {
-    let s = (raw ?? "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
+  current=generators[topic](level);
+  showTabs(1);
+  setTimer();
+  setGuided(el("route").value==="guided");
 
-    // Comma decimal -> dot
-    s = s.replace(/,/g, ".");
-
-    // Remove spaces
-    s = s.replace(/\s+/g, "");
-
-    // Remove currency & common unit words
-    s = s
-      .replace(/€/g, "")
-      .replace(/eur(os)?/g, "")
-      .replace(/euro(s)?/g, "")
-      .replace(/kg/g, "")
-      .replace(/kilogram(o|os)?/g, "")
-      .replace(/km/g, "")
-      .replace(/kilometro(s)?/g, "")
-      .replace(/min(uto)?(s)?/g, "")
-      .replace(/hora(s)?/g, "")
-      .replace(/dia(s)?/g, "")
-      .replace(/mesa(s)?/g, "")
-      .replace(/camion(es)?/g, "")
-      .replace(/litro(s)?/g, "")
-      .replace(/porciento/g, "")
-      .replace(/%/g, "");
-
-    if (unit) {
-      const u = unit
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase();
-      if (u) {
-        s = s.replace(new RegExp(u.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"), "g"), "");
-      }
-    }
-
-    // Remove anything that's not number-ish
-    s = s.replace(/[^0-9.\-]/g, "");
-
-    return parseFloat(s);
-  }
-
-  function checkAnswer() {
-    if (answeredCorrectly) return;
-
-    const level = levels[current];
-    const val = sanitizeInput(document.getElementById("ans").value, level.unit);
-    const feedbackBox = document.getElementById("feedbackBox");
-
-    if (isNaN(val)) {
-      feedbackBox.innerHTML = `
-        <div class="feedback incorrect">
-          Escribe una respuesta válida (número + unidad opcional).
-          <div class="hint">Ejemplos válidos: 30, 30 km, 22.5 €</div>
-        </div>
-      `;
-      return;
-    }
-
-    if (Math.abs(val - level.answer) < 0.001) {
-      answeredCorrectly = true;
-      clearInterval(timerId);
-      score += 10 + timeLeft + difficultyBonus(level);
-      playSound("correct");
-      updateTopBar();
-
-      feedbackBox.innerHTML = `
-        <div class="feedback correct">
-          ✔ Correcto. Has conquistado la isla.<br>
-          Solución: <strong>${formatAnswer(level)} ${level.unit}</strong>
-        </div>
-        <div class="fact">${level.fact}</div>
-        <button class="secondary" id="nextBtn">Siguiente nivel</button>
-      `;
-
-      document.getElementById("nextBtn").addEventListener("click", nextLevel);
-    } else {
-      playSound("incorrect");
-      loseLife("✘ Incorrecto.", level.hint);
-    }
-  }
-
-  function loseLife(message, hint) {
-    lives--;
-    updateTopBar();
-
-    const feedbackBox = document.getElementById("feedbackBox");
-    if (feedbackBox) {
-      feedbackBox.innerHTML = `
-        <div class="feedback incorrect">
-          ${message}
-          <div class="hint">${hint}</div>
-        </div>
-      `;
-    }
-
-    if (lives <= 0) {
-      showGameOver();
-    }
-  }
-
-  function nextLevel() {
-    playSound("next");
-    current++;
-
-    if (current >= levels.length) {
-      showVictory();
-      return;
-    }
-
-    renderLevel();
-  }
-
-  function showGameOver() {
-    clearInterval(timerId);
-    saveBestScoreFromUI(score);
-
-    app.innerHTML = `
-      <div class="final">
-        <div class="big">💀</div>
-        <h2>Game Over</h2>
-        <p>Te has quedado sin vidas.</p>
-        <p>Puntuación final: <strong>${score}</strong></p>
-        <button class="restart" onclick="restartGame()">Reintentar</button>
-      </div>
-    `;
-  }
-
-  function showVictory() {
-    clearInterval(timerId);
-    progressBar.style.width = "100%";
-
-    saveBestScoreFromUI(score);
-
-    app.innerHTML = `
-      <div class="final">
-        <div class="big">🏆</div>
-        <h2>¡Archipiélago completado!</h2>
-        <p>Has superado los ${levels.length} problemas.</p>
-        <p>Puntuación final: <strong>${score}</strong></p>
-        <button class="restart" onclick="restartGame()">Volver a jugar</button>
-      </div>
-    `;
-  }
-
-  function restartGame() {
-    clearInterval(timerId);
-    current = 0;
-    score = 0;
-    lives = 3;
-    timeLeft = 90;
-    renderLevel();
-  }
-
-  muteBtn.addEventListener("click", () => {
-    muted = !muted;
-    muteBtn.textContent = muted ? "🔇" : "🔊";
+  // reset guided feedbacks
+  ["f1fb","f2fb","feedback"].forEach(id=>{
+    const node=el(id);node.style.display="none";node.textContent="";
   });
 
-  renderRanking();
-  renderLevel();
-</script>
+  el("q").textContent=current.q;
+  el("phase1Notice").className="notice";
+  el("phase1Notice").textContent =
+    current.topic.includes("inversa")
+      ? "Pista: inversa → producto constante (pinta el cruzado, hazlo bonito)."
+      : current.topic.includes("directa")
+        ? "Pista: directa → misma razón. En 2º ESO, factor y tabla son tus mejores amigos."
+        : "Pista: si hay potencias (área, volumen), la inversa viene con raíces.";
 
+  const schema = el("schema");
+  schema.style.display="";
+  schema.innerHTML=current.schema.map(x=>`- ${x}`).join("<br>");
+
+  const method=el("method").value;
+  const manipExplain=el("manipExplain");
+  if(method==="manip"){
+    manipExplain.style.display="";
+    manipExplain.textContent="Piezas para construir factores o constantes. No se trata de 'adivinar': se trata de controlar la cantidad.";
+    const holder=el("pieces");holder.innerHTML="";
+    [1,2,3,5,10].forEach(v=>{
+      const d=document.createElement("div");
+      d.className="piece";d.textContent=v;
+      d.onclick=()=>el("total").textContent=Number(el("total").textContent)+v;
+      holder.appendChild(d);
+    });
+    el("manipZone").style.display="";
+  }else{
+    manipExplain.style.display="none";
+    el("manipZone").style.display="none";
+  }
+
+  el("points").textContent=points;
+  el("best").textContent=best;
+  el("total").textContent="0";
+  el("answer").value="";
+  ["f1m1","f1m2","f1rel","f2Rule"].forEach(id=>{const x=el(id);if(x)x.value="";});
+}
+
+function checkF1(){
+  const m1=(el("f1m1").value||"").trim().toLowerCase();
+  const m2=(el("f1m2").value||"").trim().toLowerCase();
+  const rel=(el("f1rel").value||"").trim().toLowerCase();
+  const fb=el("f1fb");fb.style.display="";
+
+  const ok= m1 && m2 && rel &&
+    (rel.includes("direct")||rel.includes("invers")) &&
+    (humanRel()==="directa" ? rel.includes("direct") : rel.includes("invers"));
+
+  fb.className="notice "+(ok?"good":"bad");
+  fb.textContent = ok ? "Fase 1 OK. Dale a la Fase 2." : "Alguna pieza floja: magnitudes y directa/inversa deben cuadrar con el enunciado.";
+}
+
+function checkF2(){
+  const rule=(el("f2Rule").value||"").trim().toLowerCase().replace(/\s+/g,"");
+  const fb=el("f2fb");fb.style.display="";
+
+  // acepta varias variantes cortas
+  const ok =
+    current.topic==="inversa aritmética" ? rule.includes("equip") && rule.includes("dia") :
+    current.topic==="directa aritmética" ? (rule.includes("factor") || rule.includes("b/a") || rule.includes("ba")) :
+    current.topic==="directa geométrica" ? (rule.includes("cm*escala") || rule.includes("escala") || rule.includes("regla")) :
+    rule.includes("raiz") || rule.includes("√") || rule.includes("∛") || rule.includes("cbrt") || rule.includes("sqrt");
+
+  fb.className="notice "+(ok?"good":"bad");
+  fb.textContent = ok ? "Fase 2 OK (no hace falta que sea perfecto, con que represente la idea vale)." :
+    "Si es inversa: constante (producto). Si hay potencias: raíles=raíces. Si es escala: regla con escala.";
+}
+
+function checkAnswer(){
+  const n=parseNum(el("answer").value);
+  const fb=el("feedback");fb.style.display="";
+  if(Number.isNaN(n)){fb.className="notice bad";fb.textContent="Escribe un número.";return}
+  const ok=Math.abs(n-current.ans)<=0.02;
+  fb.className="notice "+(ok?"good":"bad");
+  fb.textContent = ok ? `¡Bien! ${fmt(current.ans)}${current.unit?(" "+current.unit):""}` :
+    `Casi. Era ${fmt(current.ans)}${current.unit?(" "+current.unit):""}`;
+
+  if(ok){
+    points+=scoreAdd();
+    best=Math.max(best,points);
+    localStorage.setItem(BEST_KEY,best);
+    el("points").textContent=points;
+    el("best").textContent=best;
+  }
+}
+
+el("new").onclick=()=>buildProblem();
+el("skip").onclick=()=>buildProblem();
+el("check").onclick=()=>checkAnswer();
+el("resetPieces").onclick=()=>el("total").textContent="0";
+el("method").onchange=()=>buildProblem();
+el("route").onchange=()=>setGuided(el("route").value==="guided");
+el("f1Check").onclick=()=>checkF1();
+el("f2Check").onclick=()=>checkF2();
+document.querySelectorAll(".tab").forEach(b=>{
+  b.onclick=()=>showTabs(Number(b.dataset.phase));
+});
+
+buildProblem();
+</script>
 </body>
 </html>
