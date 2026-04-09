@@ -1,372 +1,490 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Trophy, Timer, Lightbulb, RotateCcw, PlayCircle, CheckCircle2, Lock, Star } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const families = [
-  { id: "mix", label: "Mezcla" },
-  { id: "arith_direct", label: "Directa aritmética" },
-  { id: "arith_inverse", label: "Inversa aritmética" },
-  { id: "geo_direct", label: "Directa geométrica" },
-  { id: "geo_inverse", label: "Inversa geométrica" },
-];
-
-const routes = [
-  { id: "guided", label: "Ruta guiada" },
-  { id: "free", label: "Ruta libre" },
-];
-
-const methods = [
-  { id: "esquema", label: "Esquema de datos" },
-  { id: "manip", label: "Manipulativa" },
-  { id: "ensayo", label: "Ensayo-error" },
-];
-
-const phaseStyles = {
-  1: "bg-blue-50 border-blue-200",
-  2: "bg-amber-50 border-amber-200",
-  3: "bg-green-50 border-green-200",
-};
-
-const pieceValues = [1, 2, 3, 5, 10, 100, 1000];
-
-const sampleProblems = {
-  geo_direct: [
-    {
-      statement: "Escala 1:5000. En el plano hay 6 cm. ¿Cuántos metros reales son?",
-      context: "Estás leyendo un plano para una ruta escolar.",
-      magnitud1: "cm en el plano",
-      magnitud2: "m en la realidad",
-      relation: "directa",
-      representation: "1 cm plano → 5000 cm reales",
-      factor: "5000",
-      formula: "m = cm·escala/100",
-      answer: 300,
-      hint: "Primero multiplica por la escala y luego pasa de cm a m.",
-      feedbackWrong: "Casi. Probablemente te faltó convertir de centímetros a metros.",
-    },
-    {
-      statement: "En un mapa a escala 1:10000, una carretera mide 4 cm. ¿Cuántos metros son en realidad?",
-      context: "Una arquitecta necesita comprobar la distancia real.",
-      magnitud1: "cm en el mapa",
-      magnitud2: "m reales",
-      relation: "directa",
-      representation: "1 cm mapa → 10000 cm reales",
-      factor: "10000",
-      formula: "m = cm·escala/100",
-      answer: 400,
-      hint: "Cada centímetro del plano representa muchísimos cm reales.",
-      feedbackWrong: "Revisa la conversión final: 100 cm son 1 metro.",
-    },
-  ],
-  arith_direct: [
-    {
-      statement: "Si 3 cuadernos cuestan 9 €, ¿cuánto costarán 7 cuadernos?",
-      context: "Estás comprando material para clase.",
-      magnitud1: "cuadernos",
-      magnitud2: "precio",
-      relation: "directa",
-      representation: "3 → 9 ; 7 → x",
-      factor: "3",
-      formula: "precio = cuadernos·3",
-      answer: 21,
-      hint: "Busca cuánto vale 1 cuaderno.",
-      feedbackWrong: "Ojo: si aumentan los cuadernos, el precio también aumenta.",
-    },
-  ],
-  arith_inverse: [
-    {
-      statement: "4 alumnos tardan 12 minutos en recoger material. ¿Cuánto tardarán 6 alumnos al mismo ritmo?",
-      context: "La clase quiere terminar antes del recreo.",
-      magnitud1: "alumnos",
-      magnitud2: "tiempo",
-      relation: "inversa",
-      representation: "4 → 12 ; 6 → x",
-      factor: "48",
-      formula: "alumnos·tiempo = constante",
-      answer: 8,
-      hint: "Más alumnos deberían tardar menos, no más.",
-      feedbackWrong: "Pista: aquí no crece todo a la vez; una magnitud sube y la otra baja.",
-    },
-  ],
-  geo_inverse: [
-    {
-      statement: "Un rectángulo de área 24 cm² tiene base 3 cm. ¿Cuál debe ser su altura?",
-      context: "Estás diseñando una tarjeta con área fija.",
-      magnitud1: "base",
-      magnitud2: "altura",
-      relation: "inversa",
-      representation: "base·altura = 24",
-      factor: "24",
-      formula: "altura = área/base",
-      answer: 8,
-      hint: "Si la base es pequeña, la altura debe compensar.",
-      feedbackWrong: "Piensa en el producto constante: base por altura no cambia.",
-    },
-  ],
-};
-
-function pickProblem(family) {
-  const resolved = family === "mix"
-    ? ["geo_direct", "arith_direct", "arith_inverse", "geo_inverse"][Math.floor(Math.random() * 4)]
-    : family;
-  const bank = sampleProblems[resolved] || sampleProblems.geo_direct;
-  return { ...bank[Math.floor(Math.random() * bank.length)], family: resolved };
-}
-
-function formatTime(seconds) {
-  const m = String(Math.floor(seconds / 60)).padStart(2, "0");
-  const s = String(seconds % 60).padStart(2, "0");
-  return `${m}:${s}`;
-}
-
-export default function App() {
-  const [family, setFamily] = useState("mix");
-  const [level, setLevel] = useState("1");
-  const [route, setRoute] = useState("guided");
-  const [method, setMethod] = useState("manip");
-  const [problem, setProblem] = useState(() => pickProblem("mix"));
-  const [phase, setPhase] = useState(1);
-  const [score, setScore] = useState(0);
-  const [best, setBest] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-  const [tries, setTries] = useState(0);
-
-  const [f1a, setF1a] = useState("");
-  const [f1b, setF1b] = useState("");
-  const [f1c, setF1c] = useState("");
-  const [f2, setF2] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [mounted, setMounted] = useState(0);
-  const [message, setMessage] = useState("");
-  const [usedHint, setUsedHint] = useState(false);
-
-  useEffect(() => {
-    const id = setInterval(() => setSeconds((s) => s + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    setBest((prev) => Math.max(prev, score));
-  }, [score]);
-
-  const progress = useMemo(() => ((phase - 1) / 3) * 100, [phase]);
-
-  const resetInputs = () => {
-    setF1a("");
-    setF1b("");
-    setF1c("");
-    setF2("");
-    setAnswer("");
-    setMounted(0);
-    setMessage("");
-    setUsedHint(false);
-    setTries(0);
-    setPhase(1);
-    setSeconds(0);
-  };
-
-  const newProblem = () => {
-    setProblem(pickProblem(family));
-    resetInputs();
-  };
-
-  const normalize = (value) => value.toLowerCase().trim();
-
-  const checkPhase1 = () => {
-    const ok =
-      normalize(f1a).includes(problem.magnitud1.split(" ")[0]) &&
-      normalize(f1b).includes(problem.magnitud2.split(" ")[0]) &&
-      normalize(f1c) === problem.relation;
-
-    if (ok) {
-      setMessage("✅ Fase 1 superada. Ya sabes qué se compara y cómo se relaciona.");
-      setPhase(2);
-      setScore((s) => s + 10);
-    } else {
-      setTries((t) => t + 1);
-      setMessage(`❌ Revisa las magnitudes o la relación. ${problem.feedbackWrong}`);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mates Canarias - Escalas</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#121c33;
+      --card2:#182744;
+      --text:#eaf0ff;
+      --muted:#9fb4ff;
+      --ok:#33e28a;
+      --warn:#ffc857;
+      --err:#ff4d6d;
     }
-  };
 
-  const checkPhase2 = () => {
-    const ok = normalize(f2) === normalize(problem.factor);
-    if (ok) {
-      setMessage("✅ Fase 2 correcta. La representación ya está bajo control.");
-      setPhase(3);
-      setScore((s) => s + 10);
-    } else {
-      setTries((t) => t + 1);
-      setMessage("❌ Revisa el factor o la constante. La representación manda más que la prisa.");
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 600px at 20% 20%, rgba(60, 85, 255, .25), transparent 60%),
+                  radial-gradient(900px 700px at 80% 70%, rgba(255, 70, 120, .16), transparent 55%),
+                  linear-gradient(180deg, var(--bg), #050814);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
     }
-  };
 
-  const checkFinal = () => {
-    const n = Number(String(answer).replace(",", "."));
-    if (n === Number(problem.answer)) {
-      const bonus = usedHint ? 5 : tries === 0 ? 15 : 10;
-      setScore((s) => s + bonus);
-      setMessage(`🏆 Correcto. Has ganado ${bonus} puntos. Matemáticamente limpio.`);
-    } else {
-      setTries((t) => t + 1);
-      setMessage(`❌ No sale. ${problem.feedbackWrong}`);
+    .shell{
+      max-width: 880px;
+      margin: 0 auto;
     }
-  };
 
-  return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8">
-      <div className="mx-auto max-w-6xl space-y-4">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="rounded-3xl shadow-lg">
-            <CardHeader>
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <CardTitle className="text-2xl">Newton · Proporcionalidad · V4</CardTitle>
-                  <p className="text-sm text-slate-600">Centro: Tamogante · 2º ESO · Pensar antes de operar</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Badge className="rounded-full px-3 py-1 text-sm"><Trophy className="mr-1 h-4 w-4" /> Puntos: {score}</Badge>
-                  <Badge className="rounded-full px-3 py-1 text-sm"><Star className="mr-1 h-4 w-4" /> Mejor: {best}</Badge>
-                  <Badge className="rounded-full px-3 py-1 text-sm"><Timer className="mr-1 h-4 w-4" /> {formatTime(seconds)}</Badge>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="grid gap-3 md:grid-cols-5">
-              <Select value={family} onValueChange={(v) => setFamily(v)}>
-                <SelectTrigger className="rounded-2xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{families.map((f) => <SelectItem key={f.id} value={f.id}>{f.label}</SelectItem>)}</SelectContent>
-              </Select>
-              <Select value={level} onValueChange={setLevel}>
-                <SelectTrigger className="rounded-2xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{["1", "2", "3"].map((n) => <SelectItem key={n} value={n}>Nivel {n}</SelectItem>)}</SelectContent>
-              </Select>
-              <Select value={route} onValueChange={setRoute}>
-                <SelectTrigger className="rounded-2xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{routes.map((r) => <SelectItem key={r.id} value={r.id}>{r.label}</SelectItem>)}</SelectContent>
-              </Select>
-              <Select value={method} onValueChange={setMethod}>
-                <SelectTrigger className="rounded-2xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{methods.map((m) => <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>)}</SelectContent>
-              </Select>
-              <Button className="rounded-2xl" onClick={newProblem}><PlayCircle className="mr-2 h-4 w-4" /> Nuevo problema</Button>
-            </CardContent>
-          </Card>
-        </motion.div>
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:16px;
+    }
 
-        <Card className="rounded-3xl shadow-lg">
-          <CardContent className="space-y-4 p-6">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-slate-500">Progreso por fases</p>
-                <Progress value={progress} className="mt-2 h-3 rounded-full" />
-              </div>
-              <div className="flex gap-2">
-                {[1,2,3].map((p) => (
-                  <Button key={p} variant={phase === p ? "default" : "outline"} className="rounded-2xl" onClick={() => p <= phase && setPhase(p)}>
-                    {p < phase ? <CheckCircle2 className="mr-2 h-4 w-4" /> : p > phase ? <Lock className="mr-2 h-4 w-4" /> : null}
-                    Fase {p}
-                  </Button>
-                ))}
-              </div>
-            </div>
+    .title{
+      line-height:1.15;
+    }
 
-            <div className="rounded-3xl border bg-white p-5">
-              <p className="text-sm font-semibold text-slate-500">Contexto</p>
-              <p className="mt-1 text-base text-slate-700">{problem.context}</p>
-              <p className="mt-4 text-lg font-semibold">{problem.statement}</p>
-              <div className="mt-3 flex items-start gap-2 rounded-2xl bg-violet-50 p-3 text-sm text-slate-700">
-                <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{usedHint ? problem.hint : "La pista está disponible, pero usarla da menos puntos. La vida es así de dramática."}</span>
-              </div>
-              {!usedHint && <Button variant="outline" className="mt-3 rounded-2xl" onClick={() => setUsedHint(true)}>Ver pista</Button>}
-            </div>
+    .title h1{
+      font-size: 22px;
+      margin: 0;
+    }
 
-            {phase === 1 && (
-              <div className={`rounded-3xl border p-5 ${phaseStyles[1]}`}>
-                <h3 className="text-lg font-semibold">Fase 1 · Comprender</h3>
-                <p className="mb-4 text-sm text-slate-600">Aquí no vale el modo loro. Hay que identificar qué se compara y si crecen juntas o al revés.</p>
-                {route === "guided" ? (
-                  <div className="grid gap-3 md:grid-cols-3">
-                    <Input value={f1a} onChange={(e) => setF1a(e.target.value)} placeholder="Magnitud 1" className="rounded-2xl" />
-                    <Input value={f1b} onChange={(e) => setF1b(e.target.value)} placeholder="Magnitud 2" className="rounded-2xl" />
-                    <Input value={f1c} onChange={(e) => setF1c(e.target.value)} placeholder="directa o inversa" className="rounded-2xl" />
-                  </div>
-                ) : (
-                  <Input value={f1c} onChange={(e) => setF1c(e.target.value)} placeholder="Escribe qué magnitudes ves y si es directa o inversa" className="rounded-2xl" />
-                )}
-                <Button className="mt-4 rounded-2xl" onClick={checkPhase1}>Comprobar fase 1</Button>
-              </div>
-            )}
+    .title p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-            {phase === 2 && (
-              <div className={`rounded-3xl border p-5 ${phaseStyles[2]}`}>
-                <h3 className="text-lg font-semibold">Fase 2 · Representar</h3>
-                <p className="mb-4 text-sm text-slate-600">Representar bien evita operar como si los números hubieran salido de una tómbola.</p>
-                <div className="rounded-2xl bg-white p-4 text-slate-700">
-                  <p>{problem.representation}</p>
-                  <p className="mt-2 font-medium">Regla: {problem.formula}</p>
-                </div>
-                <Input value={f2} onChange={(e) => setF2(e.target.value)} placeholder="Completa el factor o la constante" className="mt-4 rounded-2xl" />
-                <Button className="mt-4 rounded-2xl" onClick={checkPhase2}>Comprobar fase 2</Button>
-              </div>
-            )}
+    .score{
+      background: linear-gradient(135deg, var(--card2), var(--card));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 10px 12px;
+      min-width: 210px;
+    }
 
-            {phase === 3 && (
-              <div className={`rounded-3xl border p-5 ${phaseStyles[3]}`}>
-                <h3 className="text-lg font-semibold">Fase 3 · Ejecutar</h3>
-                <p className="mb-4 text-sm text-slate-600">Ahora sí: calcula, contrasta y remata sin cargarte la lógica por el camino.</p>
-                {method === "manip" && (
-                  <div className="rounded-2xl bg-white p-4">
-                    <p className="mb-3 font-medium">Construcción manipulativa</p>
-                    <div className="flex flex-wrap gap-2">
-                      {pieceValues.map((value) => (
-                        <Button key={value} variant="outline" className="rounded-2xl" onClick={() => setMounted((m) => m + value)}>
-                          +{value}
-                        </Button>
-                      ))}
-                    </div>
-                    <div className="mt-4 flex items-center gap-3">
-                      <Badge className="rounded-full px-3 py-1 text-sm">Total montado: {mounted}</Badge>
-                      <Button variant="outline" className="rounded-2xl" onClick={() => setMounted(0)}><RotateCcw className="mr-2 h-4 w-4" /> Reset piezas</Button>
-                    </div>
-                  </div>
-                )}
-                <Input value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Respuesta final" className="mt-4 rounded-2xl bg-white" />
-                <div className="mt-4 flex gap-2">
-                  <Button className="rounded-2xl" onClick={checkFinal}>Comprobar</Button>
-                  <Button variant="outline" className="rounded-2xl" onClick={newProblem}>Pasar</Button>
-                </div>
-              </div>
-            )}
+    .score b{display:block;}
 
-            {message && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-2xl border bg-white p-4 text-sm text-slate-700">
-                {message}
-              </motion.div>
-            )}
-          </CardContent>
-        </Card>
+    .card{
+      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    }
 
-        <Card className="rounded-3xl shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl">Siguiente salto útil</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-slate-700">
-            <p>Esta versión ya está preparada para crecer. Lo siguiente sería conectar un backend para guardar alias, puntuaciones, tiempos y resultados.</p>
-            <ul className="mt-3 list-disc space-y-1 pl-5">
-              <li>Firebase o Supabase para ranking y registro de alumnado.</li>
-              <li>Google Sheets como panel rápido de profe.</li>
-              <li>Webhook o email automático con resultados.</li>
-              <li>Generador de problemas aleatorios para evitar el copia-pega olímpico.</li>
-            </ul>
-          </CardContent>
-        </Card>
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      position: relative;
+      overflow:hidden;
+      margin: 8px 0 16px;
+    }
+    .bar > span{
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width: 0%;
+      background: linear-gradient(90deg, #7c5cff, #33e28a);
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+
+    .question{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom: 14px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      width: fit-content;
+    }
+
+    .grid{
+      display:grid;
+      gap: 10px;
+      grid-template-columns: repeat(12, 1fr);
+      margin-top: 8px;
+    }
+
+    .field{
+      grid-column: span 12;
+      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    .field h3{
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 650;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .field label{
+      display:block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: rgba(234,240,255,.90);
+      font-weight: 600;
+    }
+
+    input, select{
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus{
+      border-color: rgba(51,226,138,.55);
+      box-shadow: 0 0 0 4px rgba(51,226,138,.12);
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 10px;
+    }
+
+    button{
+      cursor:pointer;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      transition: transform .08s ease, background .2s ease;
+    }
+
+    button:hover{background: rgba(255,255,255,.09);}
+
+    button:active{transform: translateY(1px);}
+
+    .primary{background: linear-gradient(135deg, #7c5cff, #33e28a); border-color: rgba(255,255,255,.20);} 
+    .primary:hover{opacity:.95;}
+    .danger{border-color: rgba(255,77,109,.55);}
+
+    .msg{
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .msg.ok{border-color: rgba(51,226,138,.55); color: rgba(234,240,255,.95); background: rgba(51,226,138,.10);} 
+    .msg.warn{border-color: rgba(255,200,87,.55); background: rgba(255,200,87,.08);} 
+    .msg.err{border-color: rgba(255,77,109,.55); background: rgba(255,77,109,.08);} 
+
+    @media (min-width: 700px){
+      .field{grid-column: span 6;}
+      .field.full{grid-column: span 12;}
+    }
+
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="title">
+        <h1>Mates Canarias · Escalas (Fases Newton)</h1>
+        <p>Comprende → Representa → Ejecuta · Puntuación · pistas (con penalización)</p>
       </div>
+      <div class="score" aria-live="polite">
+        <b id="score">Puntos: 0</b>
+        <span id="summary" style="color: var(--muted); font-size: 13px;">Bienvenida a la misión.</span>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="tag">Escala · Relación distancia en mapa/real</div>
+      <div class="bar" aria-label="Progreso"><span id="bar"></span></div>
+
+      <div class="question" id="question"></div>
+
+      <div class="grid">
+        <div class="field" id="phase1">
+          <h3>Fase 1 · Comprender <span id="p1hint" style="font-weight:600;"></span></h3>
+          <label for="relation">¿Qué tipo de proporcionalidad hay?</label>
+          <select id="relation">
+            <option value="">— elige —</option>
+            <option value="directa">Directa</option>
+            <option value="inversa">Inversa</option>
+          </select>
+        </div>
+
+        <div class="field" id="phase2">
+          <h3>Fase 2 · Representar</h3>
+          <label for="step">¿Qué operación corresponde en este problema?</label>
+          <select id="step">
+            <option value="">— elige —</option>
+            <option value="dividir">Dividir la medida real entre la escala</option>
+            <option value="multiplicar">Multiplicar la medida en mapa por la escala</option>
+          </select>
+          <div style="margin-top:8px; color: var(--muted); font-size:13px;">
+            Nota: usa la opción "pista" si dudan. Pierdes puntos, pero ganas neuronas.
+          </div>
+        </div>
+
+        <div class="field full" id="phase3">
+          <h3>Fase 3 · Ejecutar</h3>
+          <label for="answer">Resultado (número con 1 o 2 decimales)</label>
+          <input id="answer" type="text" inputmode="decimal" placeholder="Ej: 13.2" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="hintBtn" class="danger" title="Pista (–2 puntos)">Pista</button>
+        <button id="checkBtn" class="primary">Comprobar</button>
+        <button id="skipBtn">Siguiente</button>
+        <button id="resetBtn" class="danger">Reset (todos los puntos)</button>
+      </div>
+
+      <div id="message" class="msg" role="status"></div>
     </div>
-  );
-}
+
+  </div>
+
+  <script>
+    // Fases: Directa/Inversa + operación + ejecución
+    // El alumno no puede saltarse fases: si falla, feedback útil.
+
+    const qEl = document.getElementById('question');
+    const relationEl = document.getElementById('relation');
+    const stepEl = document.getElementById('step');
+    const ansEl = document.getElementById('answer');
+    const msgEl = document.getElementById('message');
+    const scoreEl = document.getElementById('score');
+    const summaryEl = document.getElementById('summary');
+    const barEl = document.getElementById('bar');
+
+    let score = 0;
+    let current = null;
+
+    function rnd(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    function cleanNumber(str){
+      // aceptar 3.5 o 3,5
+      str = (str ?? '').toString().trim().replace(',', '.');
+      return Number(str);
+    }
+
+    function format(n){
+      return (Math.round(n * 100) / 100).toString();
+    }
+
+    function buildScaleQuestion(){
+      // Tipos: real -> mapa (dividir), mapa -> real (multiplicar)
+      const scales = [50, 100, 200, 500, 1000, 2000, 5000, 10000];
+      const scale = rnd(scales);
+
+      const unitsReal = ["cm", "m", "km"];
+      const uR = rnd(unitsReal);
+
+      // Aseguramos números razonables
+      // Caso 1: dado real, buscar mapa
+      // Caso 2: dado mapa, buscar real
+      const caseType = Math.random() < 0.55 ? 'realToMap' : 'mapToReal';
+
+      // generamos medida real sensata
+      let real = (Math.random() * 900 + 100); // 100..1000
+      let map = real / scale;
+
+      // Ajuste para unidades: si real se expresa en km, que no sea ridículo
+      if (uR === 'km') {
+        real = (Math.random() * 14 + 1); // 1..15 km
+        map = real * 100000; // en cm (para escala típica)
+      }
+
+      // ahora normalizamos a cm o m o km
+      const uMap = 'cm';
+
+      let knownText, unknownText, correct;
+
+      if (caseType === 'realToMap') {
+        // Vamos a pedir dist en cm en el mapa
+        const realVal = real;
+        const realUnit = uR;
+
+        // convertimos real a cm para operar
+        let realInCm = realVal;
+        if (realUnit === 'm') realInCm = realVal * 100;
+        if (realUnit === 'km') realInCm = realVal * 100000;
+
+        correct = realInCm / scale; // cm en el mapa
+
+        knownText = `Distancia real: <b>${format(realVal)} ${realUnit}</b>. Escala: <b>1:${scale}</b>. ¿Cuánto mide en el mapa en cm?`;
+        unknownText = `${format(correct)} cm`;
+      } else {
+        // mapToReal: damos mapa en cm y pedimos real en m
+        const mapVal = Math.random() * 40 + 5; // 5..45 cm
+        const realInCm = mapVal * scale;
+
+        // expresamos en m
+        correct = realInCm / 100;
+
+        knownText = `Distancia en el mapa: <b>${format(mapVal)} cm</b>. Escala: <b>1:${scale}</b>. ¿Cuánto mide en la realidad en metros?`;
+        unknownText = `${format(correct)} m`;
+      }
+
+      const question = {
+        knownText,
+        unknownText,
+        correct,
+        relation: 'directa',
+        step: caseType === 'realToMap' ? 'dividir' : 'multiplicar',
+        caseType
+      };
+
+      return question;
+    }
+
+    function setProgress(phase){
+      const pct = phase === 1 ? 33 : phase === 2 ? 66 : 100;
+      barEl.style.width = pct + '%';
+    }
+
+    function setMessage(type, text){
+      msgEl.className = 'msg ' + type;
+      msgEl.innerHTML = text;
+    }
+
+    function updateScore(delta, reason){
+      score = Math.max(0, score + delta);
+      scoreEl.textContent = `Puntos: ${score}`;
+      if (reason) summaryEl.textContent = reason;
+    }
+
+    function load(){
+      relationEl.value = '';
+      stepEl.value = '';
+      ansEl.value = '';
+
+      current = buildScaleQuestion();
+      setProgress(1);
+      qEl.innerHTML = `<div style="font-size: 16px; line-height:1.4;">${current.knownText}</div>`;
+      setMessage('warn', '🔍 Paso a paso: primero decide si es directa/inversa.');
+      summaryEl.textContent = 'Vamos por fases. Si te atascas: pista (pérdida suave de puntos).';
+    }
+
+    function hint(){
+      if (!current) return;
+      updateScore(-2, 'Usaste una pista (–2).');
+
+      if (!relationEl.value){
+        setMessage('warn', '💡 Pista Fase 1: en una escala 1:N, si la distancia real es mayor, la del mapa también. <b>Directa</b>.');
+        return;
+      }
+      if (!stepEl.value){
+        const t = current.caseType === 'realToMap'
+          ? 'Si conoces la real, para pasar a mapa divides por la escala.'
+          : 'Si conoces la del mapa, para pasar a real multiplicas por la escala.';
+        setMessage('warn', `💡 Pista Fase 2: ${t}`);
+        return;
+      }
+      setMessage('warn', `💡 Pista Fase 3: el resultado correcto debería rondar <b>${format(current.correct)}</b>.`);
+    }
+
+    function check(){
+      if (!current) return;
+
+      // Fase 1
+      if (!relationEl.value){
+        setProgress(1);
+        setMessage('warn', 'Primero Fase 1: elige directa/inversa.');
+        return;
+      }
+      if (relationEl.value !== current.relation){
+        updateScore(-1, 'Corrección fase 1 (–1).');
+        setProgress(1);
+        setMessage('err', '🙃 Ojo: para una escala 1:N la proporcionalidad es <b>directa</b> (relación constante).');
+        return;
+      }
+
+      // Fase 2
+      setProgress(2);
+      if (!stepEl.value){
+        setMessage('warn', 'Ahora Fase 2: elige la operación correcta.');
+        return;
+      }
+      if (stepEl.value !== current.step){
+        updateScore(-1, 'Corrección fase 2 (–1).');
+        setMessage('err', '⚠️ Esa operación no corresponde a este caso. Pista: escala 1:N → para pasar de lo conocido a lo desconocido: real→mapa divides / mapa→real multiplicas.');
+        return;
+      }
+
+      // Fase 3
+      setProgress(3);
+      const n = cleanNumber(ansEl.value);
+      if (!ansEl.value.trim()){
+        setMessage('warn', 'Fase 3: escribe el resultado (número).');
+        return;
+      }
+      if (Number.isNaN(n)){
+        setMessage('err', 'Eso no parece un número. Prueba con formato 13.2 (o 13,2).');
+        return;
+      }
+
+      const correct = current.correct;
+      const diff = Math.abs(n - correct);
+      if (diff <= 0.05 * Math.max(1, correct)){
+        updateScore(10, '✅ Correcto (+10).');
+        setMessage('ok', `✅ Perfecto. Resultado aproximado esperado: <b>${format(correct)}</b> (tu respuesta: ${format(n)}).`);
+        current = null; // bloquear re-chequeo
+      } else {
+        updateScore(-2, 'Incorrecto (–2).');
+        const hint = current.caseType === 'realToMap'
+          ? 'Revísalo: map(cm) = real(cm) / escala.'
+          : 'Revísalo: real(m) = map(cm) × escala ÷ 100.';
+        setMessage('err', `❌ Incorrecto. ${hint}`);
+      }
+    }
+
+    function next(){
+      load();
+    }
+
+    function reset(){
+      score = 0;
+      updateScore(0, 'Reset total.');
+      load();
+    }
+
+    document.getElementById('hintBtn').addEventListener('click', hint);
+    document.getElementById('checkBtn').addEventListener('click', check);
+    document.getElementById('skipBtn').addEventListener('click', next);
+    document.getElementById('resetBtn').addEventListener('click', reset);
+
+    // ENTER avanza o comprueba según contexto
+    ansEl.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter') check();
+    });
+
+    load();
+  </script>
+</body>
+</html>
