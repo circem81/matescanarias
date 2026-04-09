@@ -315,7 +315,7 @@
     }
   ];
 
-  var current = null;
+  cases.push(function(){var p=4;var harina=300;var objetivo=8;return{caseType:'receta',relation:'directa',step:'multiplica',problem:'Para '+p+' personas se usan '+harina+' g de harina. ¿Cuántos gramos necesitas para '+objetivo+' personas?',hint:'Más personas → más ingredientes. Relación directa.',correct:harina*objetivo/p};},function(){var p=6;var huevos=9;var objetivo=10;return{caseType:'receta',relation:'directa',step:'multiplica',problem:'Una receta para '+p+' personas lleva '+huevos+' huevos. ¿Cuántos huevos necesitas para '+objetivo+' personas?',hint:'Escala con proporcionalidad directa.',correct:huevos*objetivo/p};},function(){var leche=500;var p=4;var objetivo=2;return{caseType:'receta',relation:'directa',step:'divide',problem:'Con '+p+' personas usas '+leche+' ml de leche. Si solo vais '+objetivo+' personas, ¿cuántos ml necesitas?',hint:'Menos personas → menos cantidad.',correct:leche*objetivo/p};}); var current = null;
 
   function setProgress(step) {
     var map = {1: 20, 2: 55, 3: 100};
