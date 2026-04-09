@@ -421,7 +421,7 @@
 
   answerEl.addEventListener('keydown', function(e){ if (e.key === 'Enter') check(); });
 
-  loadLogs();
+  cases.push(function(){var base=4,harina=240,personas=10;return{caseType:'receta',relation:'directa',step:'multiplica',problem:'Para '+base+' personas se necesitan '+harina+' g de harina. ¿Cuántos g se necesitan para '+personas+' personas?',hint:'Más personas → más ingredientes. Relación directa: multiplica.',correct:harina*personas/base};});cases.push(function(){var base=6,huevos=3,personas=10;return{caseType:'receta',relation:'directa',step:'multiplica',problem:'Para '+base+' personas se necesitan '+huevos+' huevos. ¿Cuántos huevos se necesitan para '+personas+' personas?',hint:'Relación directa (personas-huevos).',correct:huevos*personas/base};});cases.push(function(){var base=8,leche=400,personas=2;return{caseType:'receta',relation:'directa',step:'divide',problem:'Receta para '+base+' personas usa '+leche+' ml de leche. ¿Cuántos ml necesitas para '+personas+' personas?',hint:'Si reduces personas, divides.',correct:leche*personas/base};});loadLogs();
   load();
 </script>
 </body>
