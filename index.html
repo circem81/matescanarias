@@ -27,10 +27,7 @@
       padding: 24px;
     }
 
-    .shell{
-      max-width: 880px;
-      margin: 0 auto;
-    }
+    .shell{ max-width: 880px; margin: 0 auto; }
 
     header{
       display:flex;
@@ -40,20 +37,9 @@
       margin-bottom:16px;
     }
 
-    .title{
-      line-height:1.15;
-    }
-
-    .title h1{
-      font-size: 22px;
-      margin: 0;
-    }
-
-    .title p{
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
+    .title{ line-height:1.15; }
+    .title h1{ font-size: 22px; margin: 0; }
+    .title p{ margin: 6px 0 0; color: var(--muted); font-size: 14px; }
 
     .score{
       background: linear-gradient(135deg, var(--card2), var(--card));
@@ -92,12 +78,7 @@
       transition: width .25s ease;
     }
 
-    .question{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-bottom: 14px;
-    }
+    .question{ display:flex; flex-direction:column; gap:10px; margin-bottom: 14px; }
 
     .tag{
       display:inline-flex;
@@ -112,12 +93,7 @@
       width: fit-content;
     }
 
-    .grid{
-      display:grid;
-      gap: 10px;
-      grid-template-columns: repeat(12, 1fr);
-      margin-top: 8px;
-    }
+    .grid{ display:grid; gap: 10px; grid-template-columns: repeat(12, 1fr); margin-top: 8px; }
 
     .field{
       grid-column: span 12;
@@ -156,17 +132,20 @@
       outline: none;
     }
 
+    /* Mejora de accesibilidad: select con texto oscuro para que en el menú desplegable se lea bien */
+    select{
+      background: rgba(255,255,255,.9);
+      color: #0b1220;
+    }
+
+    select option{ color: #0b1220; }
+
     input:focus, select:focus{
       border-color: rgba(51,226,138,.55);
       box-shadow: 0 0 0 4px rgba(51,226,138,.12);
     }
 
-    .actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top: 10px;
-    }
+    .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px; }
 
     button{
       cursor:pointer;
@@ -228,7 +207,7 @@
 
       <div class="grid">
         <div class="field" id="phase1">
-          <h3>Fase 1 · Comprender <span id="p1hint" style="font-weight:600;"></span></h3>
+          <h3>Fase 1 · Comprender</h3>
           <label for="relation">¿Qué tipo de proporcionalidad hay?</label>
           <select id="relation">
             <option value="">— elige —</option>
@@ -270,9 +249,6 @@
   </div>
 
   <script>
-    // Fases: Directa/Inversa + operación + ejecución
-    // El alumno no puede saltarse fases: si falla, feedback útil.
-
     const qEl = document.getElementById('question');
     const relationEl = document.getElementById('relation');
     const stepEl = document.getElementById('step');
@@ -285,93 +261,57 @@
     let score = 0;
     let current = null;
 
-    function rnd(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+    const rnd = (arr)=> arr[Math.floor(Math.random()*arr.length)];
 
     function cleanNumber(str){
-      // aceptar 3.5 o 3,5
       str = (str ?? '').toString().trim().replace(',', '.');
       return Number(str);
     }
 
-    function format(n){
-      return (Math.round(n * 100) / 100).toString();
-    }
+    const format = (n)=>(Math.round(n*100)/100).toString();
 
     function buildScaleQuestion(){
-      // Tipos: real -> mapa (dividir), mapa -> real (multiplicar)
       const scales = [50, 100, 200, 500, 1000, 2000, 5000, 10000];
       const scale = rnd(scales);
-
       const unitsReal = ["cm", "m", "km"];
       const uR = rnd(unitsReal);
-
-      // Aseguramos números razonables
-      // Caso 1: dado real, buscar mapa
-      // Caso 2: dado mapa, buscar real
       const caseType = Math.random() < 0.55 ? 'realToMap' : 'mapToReal';
 
-      // generamos medida real sensata
-      let real = (Math.random() * 900 + 100); // 100..1000
-      let map = real / scale;
+      let real = (Math.random()*900 + 100);
+      if (uR === 'km') real = (Math.random()*14 + 1);
 
-      // Ajuste para unidades: si real se expresa en km, que no sea ridículo
-      if (uR === 'km') {
-        real = (Math.random() * 14 + 1); // 1..15 km
-        map = real * 100000; // en cm (para escala típica)
-      }
-
-      // ahora normalizamos a cm o m o km
-      const uMap = 'cm';
-
-      let knownText, unknownText, correct;
+      let knownText;
+      let correct;
 
       if (caseType === 'realToMap') {
-        // Vamos a pedir dist en cm en el mapa
         const realVal = real;
         const realUnit = uR;
 
-        // convertimos real a cm para operar
         let realInCm = realVal;
-        if (realUnit === 'm') realInCm = realVal * 100;
-        if (realUnit === 'km') realInCm = realVal * 100000;
+        if (realUnit === 'm') realInCm = realVal*100;
+        if (realUnit === 'km') realInCm = realVal*100000;
 
-        correct = realInCm / scale; // cm en el mapa
-
+        correct = realInCm / scale;
         knownText = `Distancia real: <b>${format(realVal)} ${realUnit}</b>. Escala: <b>1:${scale}</b>. ¿Cuánto mide en el mapa en cm?`;
-        unknownText = `${format(correct)} cm`;
       } else {
-        // mapToReal: damos mapa en cm y pedimos real en m
-        const mapVal = Math.random() * 40 + 5; // 5..45 cm
+        const mapVal = Math.random()*40 + 5;
         const realInCm = mapVal * scale;
-
-        // expresamos en m
         correct = realInCm / 100;
-
         knownText = `Distancia en el mapa: <b>${format(mapVal)} cm</b>. Escala: <b>1:${scale}</b>. ¿Cuánto mide en la realidad en metros?`;
-        unknownText = `${format(correct)} m`;
       }
 
-      const question = {
+      return {
         knownText,
-        unknownText,
         correct,
         relation: 'directa',
         step: caseType === 'realToMap' ? 'dividir' : 'multiplicar',
         caseType
       };
-
-      return question;
     }
 
-    function setProgress(phase){
-      const pct = phase === 1 ? 33 : phase === 2 ? 66 : 100;
-      barEl.style.width = pct + '%';
-    }
+    function setProgress(phase){ barEl.style.width = (phase===1?33:phase===2?66:100)+'%'; }
 
-    function setMessage(type, text){
-      msgEl.className = 'msg ' + type;
-      msgEl.innerHTML = text;
-    }
+    function setMessage(type,text){ msgEl.className = 'msg '+type; msgEl.innerHTML = text; }
 
     function updateScore(delta, reason){
       score = Math.max(0, score + delta);
@@ -380,109 +320,76 @@
     }
 
     function load(){
-      relationEl.value = '';
-      stepEl.value = '';
-      ansEl.value = '';
-
+      relationEl.value='';
+      stepEl.value='';
+      ansEl.value='';
       current = buildScaleQuestion();
       setProgress(1);
       qEl.innerHTML = `<div style="font-size: 16px; line-height:1.4;">${current.knownText}</div>`;
-      setMessage('warn', '🔍 Paso a paso: primero decide si es directa/inversa.');
+      setMessage('warn','🔍 Paso a paso: primero decide si es directa/inversa.');
       summaryEl.textContent = 'Vamos por fases. Si te atascas: pista (pérdida suave de puntos).';
     }
 
     function hint(){
       if (!current) return;
-      updateScore(-2, 'Usaste una pista (–2).');
-
+      updateScore(-2,'Usaste una pista (–2).');
       if (!relationEl.value){
-        setMessage('warn', '💡 Pista Fase 1: en una escala 1:N, si la distancia real es mayor, la del mapa también. <b>Directa</b>.');
+        setMessage('warn','💡 Pista Fase 1: en una escala 1:N, si la distancia real es mayor, la del mapa también. <b>Directa</b>.');
         return;
       }
       if (!stepEl.value){
-        const t = current.caseType === 'realToMap'
+        const t = current.caseType==='realToMap'
           ? 'Si conoces la real, para pasar a mapa divides por la escala.'
           : 'Si conoces la del mapa, para pasar a real multiplicas por la escala.';
-        setMessage('warn', `💡 Pista Fase 2: ${t}`);
+        setMessage('warn',`💡 Pista Fase 2: ${t}`);
         return;
       }
-      setMessage('warn', `💡 Pista Fase 3: el resultado correcto debería rondar <b>${format(current.correct)}</b>.`);
+      setMessage('warn',`💡 Pista Fase 3: el resultado correcto debería rondar <b>${format(current.correct)}</b>.`);
     }
 
     function check(){
       if (!current) return;
 
-      // Fase 1
-      if (!relationEl.value){
+      if (!relationEl.value){ setProgress(1); setMessage('warn','Primero Fase 1: elige directa/inversa.'); return; }
+      if (relationEl.value!==current.relation){
+        updateScore(-1,'Corrección fase 1 (–1).');
         setProgress(1);
-        setMessage('warn', 'Primero Fase 1: elige directa/inversa.');
-        return;
-      }
-      if (relationEl.value !== current.relation){
-        updateScore(-1, 'Corrección fase 1 (–1).');
-        setProgress(1);
-        setMessage('err', '🙃 Ojo: para una escala 1:N la proporcionalidad es <b>directa</b> (relación constante).');
+        setMessage('err','🙃 Ojo: para una escala 1:N la proporcionalidad es <b>directa</b> (relación constante).');
         return;
       }
 
-      // Fase 2
       setProgress(2);
-      if (!stepEl.value){
-        setMessage('warn', 'Ahora Fase 2: elige la operación correcta.');
-        return;
-      }
-      if (stepEl.value !== current.step){
-        updateScore(-1, 'Corrección fase 2 (–1).');
-        setMessage('err', '⚠️ Esa operación no corresponde a este caso. Pista: escala 1:N → para pasar de lo conocido a lo desconocido: real→mapa divides / mapa→real multiplicas.');
+      if (!stepEl.value){ setMessage('warn','Ahora Fase 2: elige la operación correcta.'); return; }
+      if (stepEl.value!==current.step){
+        updateScore(-1,'Corrección fase 2 (–1).');
+        setMessage('err','⚠️ Esa operación no corresponde a este caso. Pista: escala 1:N → para pasar de lo conocido a lo desconocido: real→mapa divides / mapa→real multiplicas.');
         return;
       }
 
-      // Fase 3
       setProgress(3);
+      if (!ansEl.value.trim()){ setMessage('warn','Fase 3: escribe el resultado (número).'); return; }
       const n = cleanNumber(ansEl.value);
-      if (!ansEl.value.trim()){
-        setMessage('warn', 'Fase 3: escribe el resultado (número).');
-        return;
-      }
-      if (Number.isNaN(n)){
-        setMessage('err', 'Eso no parece un número. Prueba con formato 13.2 (o 13,2).');
-        return;
-      }
+      if (Number.isNaN(n)){ setMessage('err','Eso no parece un número. Prueba con formato 13.2 (o 13,2).'); return; }
 
-      const correct = current.correct;
-      const diff = Math.abs(n - correct);
-      if (diff <= 0.05 * Math.max(1, correct)){
-        updateScore(10, '✅ Correcto (+10).');
-        setMessage('ok', `✅ Perfecto. Resultado aproximado esperado: <b>${format(correct)}</b> (tu respuesta: ${format(n)}).`);
-        current = null; // bloquear re-chequeo
+      const diff = Math.abs(n-current.correct);
+      if (diff <= 0.05*Math.max(1,current.correct)){
+        updateScore(10,'✅ Correcto (+10).');
+        setMessage('ok',`✅ Perfecto. Resultado aproximado esperado: <b>${format(current.correct)}</b> (tu respuesta: ${format(n)}).`);
+        current=null;
       } else {
-        updateScore(-2, 'Incorrecto (–2).');
-        const hint = current.caseType === 'realToMap'
+        updateScore(-2,'Incorrecto (–2).');
+        const hintMsg = current.caseType==='realToMap'
           ? 'Revísalo: map(cm) = real(cm) / escala.'
           : 'Revísalo: real(m) = map(cm) × escala ÷ 100.';
-        setMessage('err', `❌ Incorrecto. ${hint}`);
+        setMessage('err',`❌ Incorrecto. ${hintMsg}`);
       }
-    }
-
-    function next(){
-      load();
-    }
-
-    function reset(){
-      score = 0;
-      updateScore(0, 'Reset total.');
-      load();
     }
 
     document.getElementById('hintBtn').addEventListener('click', hint);
     document.getElementById('checkBtn').addEventListener('click', check);
-    document.getElementById('skipBtn').addEventListener('click', next);
-    document.getElementById('resetBtn').addEventListener('click', reset);
-
-    // ENTER avanza o comprueba según contexto
-    ansEl.addEventListener('keydown', (e)=>{
-      if (e.key === 'Enter') check();
-    });
+    document.getElementById('skipBtn').addEventListener('click', load);
+    document.getElementById('resetBtn').addEventListener('click', ()=>{score=0;updateScore(0,'Reset total.');load();});
+    ansEl.addEventListener('keydown', (e)=>{ if (e.key==='Enter') check(); });
 
     load();
   </script>
