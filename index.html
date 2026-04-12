@@ -1,175 +1,842 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mates Canarias</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mates Canarias PRO</title>
 
-<style>
-:root{
-  --bg:#0b1220;
-  --text:#eaf0ff;
-  --muted:#bcd1ff;
-}
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#121a2b;
+      --panel-2:#18243a;
+      --text:#eaf0ff;
+      --muted:#bcd1ff;
+      --line:rgba(255,255,255,.12);
+      --good:#22c55e;
+      --bad:#f43f5e;
+      --warn:#facc15;
+      --accent:#38bdf8;
+      --accent-2:#a855f7;
+    }
 
-body{
-  margin:0;
-  font-family:system-ui;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  justify-content:center;
-  padding:20px;
-}
+    *{box-sizing:border-box}
 
-.app{width:900px}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 500px at 15% 10%, rgba(56,189,248,.16), transparent),
+        radial-gradient(900px 500px at 85% 20%, rgba(168,85,247,.16), transparent),
+        var(--bg);
+      min-height:100vh;
+      padding:18px;
+    }
 
-.card{
-  background:rgba(255,255,255,.05);
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:10px;
-}
+    .app{
+      width:min(980px,100%);
+      margin:auto;
+    }
 
-select,input{
-  width:100%;
-  padding:8px;
-  border-radius:8px;
-  margin-top:5px;
-}
+    .top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-end;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
 
-button{
-  padding:8px 10px;
-  border-radius:8px;
-  cursor:pointer;
-}
+    h1{
+      margin:0;
+      font-size:28px;
+    }
 
-.message{margin-top:10px}
+    .sub{
+      color:var(--muted);
+      margin-top:4px;
+      font-size:14px;
+    }
 
-</style>
+    .scoreBox{
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 14px;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.15);
+    }
+
+    .titleRow{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .title{
+      font-weight:800;
+      font-size:18px;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .field{ margin-top:8px; }
+
+    .field label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input,select{
+      width:100%;
+      padding:11px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      font-size:15px;
+      outline:none;
+    }
+
+    select{
+      background:#eef4ff;
+      color:#0b1220;
+    }
+
+    input:focus,select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(56,189,248,.16);
+    }
+
+    .problem{
+      margin-top:10px;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      line-height:1.55;
+      font-size:16px;
+    }
+
+    .pill{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .bar{
+      margin:10px 0 6px;
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      overflow:hidden;
+    }
+
+    .fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--good),var(--accent),var(--accent-2));
+      transition:width .25s ease;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+    }
+
+    .primary{
+      background:rgba(56,189,248,.14);
+      border-color:rgba(56,189,248,.35);
+    }
+
+    .good{
+      background:rgba(34,197,94,.14);
+      border-color:rgba(34,197,94,.35);
+    }
+
+    .danger{
+      background:rgba(244,63,94,.14);
+      border-color:rgba(244,63,94,.35);
+    }
+
+    .accent{
+      background:rgba(168,85,247,.16);
+      border-color:rgba(168,85,247,.35);
+    }
+
+    .message{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:12px;
+      min-height:46px;
+      border:1px solid transparent;
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+
+    .message.good{
+      color:#d1fae5;
+      border-color:rgba(34,197,94,.35);
+      background:rgba(34,197,94,.10);
+    }
+
+    .message.bad{
+      color:#ffe4e6;
+      border-color:rgba(244,63,94,.35);
+      background:rgba(244,63,94,.10);
+    }
+
+    .message.warn{
+      color:#fef3c7;
+      border-color:rgba(250,204,21,.35);
+      background:rgba(250,204,21,.10);
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .stat{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .stat .n{
+      font-size:22px;
+      font-weight:800;
+    }
+
+    .stat .t{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+    }
+
+    @media (max-width:720px){
+      .row,.stats{grid-template-columns:1fr}
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
 
-<div class="app">
+    <div class="top">
+      <div>
+        <h1>Mates Canarias PRO</h1>
+        <div class="sub">Proporcionalidad y funciones · práctica guiada · 2º ESO</div>
+      </div>
+      <div class="scoreBox">Puntos: <span id="score">0</span></div>
+    </div>
 
-<h1>Mates Canarias</h1>
+    <div class="grid">
 
-<div class="card">
+      <div class="card">
+        <div class="titleRow">
+          <div class="title">Registro</div>
+          <div class="muted" id="regSummary"></div>
+        </div>
 
-<label>Tema</label>
-<select id="topic">
-<option value="mixto">Mixto</option>
-<option value="proporcionalidad">Proporcionalidad</option>
-<option value="funciones">Funciones</option>
-</select>
+        <div class="row">
+          <div class="field">
+            <label>Alias del alumno/a</label>
+            <input id="alias" placeholder="Ej: 2ESO_Ana_01" autocomplete="off">
+          </div>
 
-<label>Tipo</label>
-<select id="relation">
-<option value="">—</option>
-<option value="directa">Directa</option>
-<option value="inversa">Inversa</option>
-<option value="funcion">Función</option>
-</select>
+          <div class="field">
+            <label>Tema</label>
+            <select id="topic">
+              <option value="mixto">Mixto</option>
+              <option value="proporcionalidad">Proporcionalidad</option>
+              <option value="funciones">Funciones</option>
+            </select>
+          </div>
+        </div>
 
-<label>Estrategia</label>
-<select id="step">
-<option value="">—</option>
-<option value="multiplica">Multiplicar</option>
-<option value="divide">Dividir</option>
-<option value="calcula">Calcular</option>
-<option value="leer">Leer</option>
-</select>
+        <div class="actions">
+          <button type="button" id="saveAlias" class="good">Guardar alias</button>
+          <button type="button" id="downloadCsv">Descargar CSV</button>
+          <button type="button" id="clearLogs" class="danger">Borrar registros</button>
+        </div>
 
-<div id="problem"></div>
+        <div class="stats">
+          <div class="stat">
+            <div class="n" id="statTotal">0</div>
+            <div class="t">Intentos</div>
+          </div>
+          <div class="stat">
+            <div class="n" id="statOk">0</div>
+            <div class="t">Correctos</div>
+          </div>
+          <div class="stat">
+            <div class="n" id="statBad">0</div>
+            <div class="t">Incorrectos</div>
+          </div>
+          <div class="stat">
+            <div class="n" id="statRate">0%</div>
+            <div class="t">Acierto</div>
+          </div>
+        </div>
+      </div>
 
-<input id="answer" placeholder="Respuesta">
+      <div class="card">
+        <div class="titleRow">
+          <div class="title">Actividad</div>
+          <div class="pill" id="criterion">—</div>
+        </div>
 
-<button onclick="check()">Comprobar</button>
-<button onclick="load()">Siguiente</button>
+        <div class="bar"><div class="fill" id="fill"></div></div>
+        <div class="hint" id="hintText"></div>
 
-<div id="message" class="message"></div>
+        <div class="row">
+          <div class="field">
+            <label>1) Tipo de relación</label>
+            <select id="relation">
+              <option value="">—</option>
+              <option value="directa">Proporcionalidad directa</option>
+              <option value="inversa">Proporcionalidad inversa</option>
+              <option value="funcion">Función</option>
+            </select>
+          </div>
 
-</div>
+          <div class="field">
+            <label>2) Estrategia</label>
+            <select id="step">
+              <option value="">—</option>
+              <option value="multiplica">Multiplicar</option>
+              <option value="divide">Dividir</option>
+              <option value="calcula">Calcular sustituyendo</option>
+              <option value="leer">Leer/completar valores</option>
+              <option value="interpreta">Interpretar crecimiento</option>
+            </select>
+          </div>
+        </div>
 
-</div>
+        <div class="problem" id="problem"></div>
 
-<script>
+        <div class="field">
+          <label>3) Resultado</label>
+          <input id="answer" placeholder="Escribe solo el número" inputmode="decimal">
+        </div>
 
-let current
+        <div class="actions">
+          <button type="button" id="hintBtn">Pista (-2)</button>
+          <button type="button" id="checkBtn" class="primary">Comprobar</button>
+          <button type="button" id="nextBtn" class="accent">Siguiente</button>
+        </div>
 
-const cases = [
+        <div class="message" id="message"></div>
+      </div>
 
-{topic:'proporcionalidad',relation:'directa',step:'multiplica',
-problem:'Si 3 cajas pesan 24 kg, ¿cuánto pesan 6?',
-hint:'directa',
-correct:48},
+    </div>
+  </div>
 
-{topic:'proporcionalidad',relation:'inversa',step:'divide',
-problem:'4 obreros tardan 12 días. ¿6 obreros?',
-hint:'inversa',
-correct:8},
+  <script>
+    const aliasEl = document.getElementById('alias');
+    const topicEl = document.getElementById('topic');
+    const relationEl = document.getElementById('relation');
+    const stepEl = document.getElementById('step');
+    const problemEl = document.getElementById('problem');
+    const answerEl = document.getElementById('answer');
+    const messageEl = document.getElementById('message');
+    const scoreEl = document.getElementById('score');
+    const hintTextEl = document.getElementById('hintText');
+    const criterionEl = document.getElementById('criterion');
+    const fillEl = document.getElementById('fill');
+    const regSummaryEl = document.getElementById('regSummary');
 
-{topic:'funciones',relation:'funcion',step:'calcula',
-problem:'y = 2x + 1, x=3',
-hint:'sustituye',
-correct:7},
+    const statTotalEl = document.getElementById('statTotal');
+    const statOkEl = document.getElementById('statOk');
+    const statBadEl = document.getElementById('statBad');
+    const statRateEl = document.getElementById('statRate');
 
-{topic:'funciones',relation:'funcion',step:'calcula',
-problem:'y = 3x, x=4',
-hint:'multiplica',
-correct:12}
+    const saveAliasBtn = document.getElementById('saveAlias');
+    const downloadCsvBtn = document.getElementById('downloadCsv');
+    const clearLogsBtn = document.getElementById('clearLogs');
+    const hintBtn = document.getElementById('hintBtn');
+    const checkBtn = document.getElementById('checkBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-]
+    const state = {
+      alias: '',
+      score: 0,
+      logs: []
+    };
 
-function load(){
+    let current = null;
 
-const topic = document.getElementById('topic').value
+    function makeCase(data){
+      return () => ({ ...data });
+    }
 
-let pool = cases
+    const cases = [
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'cajas',
+        criterion:'C3.1',
+        relation:'directa',
+        step:'multiplica',
+        problem:'Si 3 cajas pesan 24 kg, ¿cuánto pesan 6 cajas?',
+        hint:'Más cajas → más peso.',
+        correct:48
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'cuadernos',
+        criterion:'C3.1',
+        relation:'directa',
+        step:'multiplica',
+        problem:'Si 5 cuadernos cuestan 10 €, ¿cuánto costarán 8 cuadernos?',
+        hint:'Más cuadernos → más precio.',
+        correct:16
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'botellas',
+        criterion:'C3.1',
+        relation:'directa',
+        step:'divide',
+        problem:'Si 12 botellas cuestan 18 €, ¿cuánto costarán 4 botellas?',
+        hint:'Menos botellas → menor precio.',
+        correct:6
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'receta_harina',
+        criterion:'C3.1',
+        relation:'directa',
+        step:'multiplica',
+        problem:'Para 4 personas se usan 300 g de harina. ¿Cuántos gramos necesitas para 8 personas?',
+        hint:'Más personas → más ingredientes.',
+        correct:600
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'receta_leche',
+        criterion:'C3.1',
+        relation:'directa',
+        step:'divide',
+        problem:'Con 4 personas usas 500 ml de leche. Si solo van 2 personas, ¿cuántos ml necesitas?',
+        hint:'Menos personas → menos cantidad.',
+        correct:250
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'obreros',
+        criterion:'C3.1 / C5.1',
+        relation:'inversa',
+        step:'divide',
+        problem:'4 obreros tardan 12 días. Si trabajan 6 obreros, ¿cuántos días tardarán?',
+        hint:'Más obreros → menos días.',
+        correct:8
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'pintores',
+        criterion:'C3.1 / C5.1',
+        relation:'inversa',
+        step:'divide',
+        problem:'8 pintores tardan 15 días. Si solo trabajan 4 pintores, ¿cuántos días tardarán?',
+        hint:'Menos pintores → más tiempo.',
+        correct:30
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'maquinas',
+        criterion:'C3.1 / C5.1',
+        relation:'inversa',
+        step:'divide',
+        problem:'6 máquinas tardan 10 horas. Si trabajan 12 máquinas, ¿cuántas horas tardarán?',
+        hint:'Más máquinas → menos tiempo.',
+        correct:5
+      }),
+      makeCase({
+        topic:'proporcionalidad',
+        caseType:'escala',
+        criterion:'C3.1 / C5.1',
+        relation:'directa',
+        step:'divide',
+        problem:'En un mapa de escala 1:5000, 8 km reales son ___ cm en el mapa.',
+        hint:'Pasa 8 km a cm y divide entre 5000.',
+        correct:160
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'imagen_funcion',
+        criterion:'C4.1',
+        relation:'funcion',
+        step:'calcula',
+        problem:'En la función y = 2x + 1, calcula y cuando x = 3.',
+        hint:'Sustituye x por 3.',
+        correct:7
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'imagen_funcion',
+        criterion:'C4.1',
+        relation:'funcion',
+        step:'calcula',
+        problem:'En la función y = 3x - 2, calcula y cuando x = 4.',
+        hint:'3·4 - 2.',
+        correct:10
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'tabla_valores',
+        criterion:'C4.2',
+        relation:'funcion',
+        step:'leer',
+        problem:'Observa la regla y = 2x. ¿Qué valor toma y cuando x = 8?',
+        hint:'Multiplica x por 2.',
+        correct:16
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'tabla_valores',
+        criterion:'C4.2',
+        relation:'funcion',
+        step:'leer',
+        problem:'En la función y = x - 3, calcula y para x = 10.',
+        hint:'Resta 3.',
+        correct:7
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'funcion_lineal',
+        criterion:'C4.1 / C4.3',
+        relation:'funcion',
+        step:'calcula',
+        problem:'En la función y = 4x, calcula y cuando x = 6.',
+        hint:'Multiplica 4 por 6.',
+        correct:24
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'funcion_afin',
+        criterion:'C4.1 / C4.3',
+        relation:'funcion',
+        step:'calcula',
+        problem:'En la función y = 5x + 2, calcula y cuando x = 2.',
+        hint:'5·2 + 2.',
+        correct:12
+      }),
+      makeCase({
+        topic:'funciones',
+        caseType:'crecimiento',
+        criterion:'C4.3',
+        relation:'funcion',
+        step:'interpreta',
+        problem:'Una función aumenta 5 unidades en y por cada 1 unidad de x. Si empieza en 0 y x = 4, ¿cuánto vale y?',
+        hint:'Cada paso suma 5.',
+        correct:20
+      })
+    ];
 
-if(topic!=='mixto'){
-  pool = cases.filter(c=>c.topic===topic)
-}
+    function saveState(){
+      localStorage.setItem('mates_pro_alias', state.alias || '');
+      localStorage.setItem('mates_pro_score', String(state.score || 0));
+      localStorage.setItem('mates_pro_logs', JSON.stringify(state.logs.slice(-500)));
+    }
 
-current = pool[Math.floor(Math.random()*pool.length)]
+    function loadState(){
+      try{
+        state.alias = localStorage.getItem('mates_pro_alias') || '';
+        state.score = Number(localStorage.getItem('mates_pro_score') || 0);
+        state.logs = JSON.parse(localStorage.getItem('mates_pro_logs') || '[]');
+      }catch(e){
+        state.alias = '';
+        state.score = 0;
+        state.logs = [];
+      }
 
-document.getElementById('problem').innerText = current.problem
-document.getElementById('answer').value=''
-document.getElementById('message').innerText='Piensa...'
-}
+      aliasEl.value = state.alias;
+      scoreEl.textContent = state.score;
+      renderStats();
+      renderSummary();
+    }
 
-function check(){
+    function ensureAlias(){
+      const alias = (aliasEl.value || '').trim();
+      if(!alias){
+        setMessage('bad','Pon un alias antes de empezar.');
+        aliasEl.focus();
+        return false;
+      }
+      state.alias = alias;
+      saveState();
+      return true;
+    }
 
-const rel = document.getElementById('relation').value
-const step = document.getElementById('step').value
-const ans = Number(document.getElementById('answer').value)
+    function renderSummary(){
+      if(!state.logs.length){
+        regSummaryEl.textContent = 'Sin registros todavía';
+        return;
+      }
+      const last = state.logs[state.logs.length - 1];
+      regSummaryEl.textContent = 'Último intento: ' + new Date(last.ts).toLocaleString();
+    }
 
-if(rel!==current.relation){
-  msg('Relación incorrecta')
-  return
-}
+    function renderStats(){
+      const total = state.logs.filter(l => l.outcome !== 'pista').length;
+      const ok = state.logs.filter(l => l.outcome === 'correcto').length;
+      const bad = state.logs.filter(l => ['incorrecto','fase1_mal','fase2_mal','faltan_datos','numero_invalido'].includes(l.outcome)).length;
+      const rate = total ? Math.round((ok / total) * 100) : 0;
 
-if(step!==current.step){
-  msg('Estrategia incorrecta')
-  return
-}
+      statTotalEl.textContent = total;
+      statOkEl.textContent = ok;
+      statBadEl.textContent = bad;
+      statRateEl.textContent = rate + '%';
+      scoreEl.textContent = state.score;
+    }
 
-if(ans===current.correct){
-  msg('Bien +10')
-}else{
-  msg('Mal')
-}
+    function setProgress(n){
+      const widths = {1:'25%',2:'60%',3:'100%'};
+      fillEl.style.width = widths[n] || '0%';
+    }
 
-}
+    function setMessage(kind,text){
+      messageEl.className = 'message';
+      if(kind) messageEl.classList.add(kind);
+      messageEl.textContent = text;
+    }
 
-function msg(t){
-document.getElementById('message').innerText=t
-}
+    function addLog(data){
+      state.logs.push({
+        alias: state.alias,
+        ts: Date.now(),
+        ...data
+      });
+      saveState();
+      renderSummary();
+      renderStats();
+    }
 
-load()
+    function pickCase(){
+      const topic = topicEl.value || 'mixto';
+      let pool = cases;
 
-</script>
+      if(topic !== 'mixto'){
+        pool = cases.filter(fn => fn().topic === topic);
+      }
 
+      const index = Math.floor(Math.random() * pool.length);
+      return pool[index]();
+    }
+
+    function loadExercise(){
+      relationEl.value = '';
+      stepEl.value = '';
+      answerEl.value = '';
+      hintTextEl.textContent = '';
+      setProgress(1);
+
+      current = pickCase();
+      problemEl.textContent = current.problem;
+      criterionEl.textContent = current.criterion || '—';
+      setMessage('', 'Piensa bien antes de responder.');
+    }
+
+    function useHint(){
+      if(!ensureAlias() || !current) return;
+      state.score -= 2;
+      hintTextEl.textContent = 'Pista: ' + current.hint;
+      setMessage('warn', 'Pista usada: -2 puntos.');
+      addLog({
+        topic: current.topic,
+        criterion: current.criterion,
+        caseType: current.caseType,
+        relation: relationEl.value || '(sin_relacion)',
+        step: stepEl.value || '(sin_estrategia)',
+        answer: '(pista)',
+        correct: current.correct,
+        outcome: 'pista',
+        scoreAfter: state.score
+      });
+    }
+
+    function parseAnswer(v){
+      return Number(String(v).replace(',', '.'));
+    }
+
+    function checkAnswer(){
+      if(!ensureAlias() || !current) return;
+
+      const rel = relationEl.value;
+      const step = stepEl.value;
+      const ansRaw = answerEl.value.trim();
+      const ans = parseAnswer(ansRaw);
+
+      let outcome = 'faltan_datos';
+
+      if(!rel || !step || !ansRaw){
+        outcome = 'faltan_datos';
+      } else if(rel !== current.relation){
+        outcome = 'fase1_mal';
+      } else if(step !== current.step){
+        outcome = 'fase2_mal';
+      } else if(Number.isNaN(ans)){
+        outcome = 'numero_invalido';
+      } else {
+        const tolerance = 0.0001;
+        outcome = Math.abs(ans - current.correct) <= tolerance ? 'correcto' : 'incorrecto';
+      }
+
+      if(outcome === 'correcto'){
+        state.score += 10;
+        setProgress(3);
+        setMessage('good','¡Correcto! +10 puntos');
+      } else if(outcome === 'fase1_mal'){
+        setProgress(1);
+        setMessage('bad','Tipo de relación incorrecto.');
+      } else if(outcome === 'fase2_mal'){
+        setProgress(2);
+        setMessage('bad','La estrategia no es la adecuada.');
+      } else if(outcome === 'numero_invalido'){
+        setMessage('bad','Escribe solo un número.');
+      } else if(outcome === 'faltan_datos'){
+        setMessage('bad','Te falta completar algún campo.');
+      } else {
+        state.score -= 3;
+        setProgress(3);
+        setMessage('bad','Incorrecto. -3 puntos');
+      }
+
+      addLog({
+        topic: current.topic,
+        criterion: current.criterion,
+        caseType: current.caseType,
+        relation: rel || '-',
+        step: step || '-',
+        answer: ansRaw || '-',
+        correct: current.correct,
+        outcome,
+        scoreAfter: state.score
+      });
+    }
+
+    function clearLogs(){
+      if(!confirm('¿Borrar registros y puntuación de este dispositivo?')) return;
+      state.logs = [];
+      state.score = 0;
+      saveState();
+      renderSummary();
+      renderStats();
+      setMessage('warn','Registros borrados.');
+    }
+
+    function saveAlias(){
+      if(ensureAlias()){
+        setMessage('good','Alias guardado.');
+      }
+    }
+
+    function downloadCsv(){
+      if(!state.logs.length){
+        setMessage('bad','No hay registros para descargar.');
+        return;
+      }
+
+      const header = ['fecha','alias','tema','criterio','caso','relacion','estrategia','respuesta','correcta','resultado','puntos_despues'];
+      const rows = state.logs.map(l => [
+        new Date(l.ts).toISOString(),
+        l.alias,
+        l.topic,
+        l.criterion,
+        l.caseType,
+        l.relation,
+        l.step,
+        l.answer,
+        l.correct,
+        l.outcome,
+        l.scoreAfter
+      ]);
+
+      const csv = [header, ...rows]
+        .map(row => row.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mates_canarias_pro_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setMessage('good','CSV descargado.');
+    }
+
+    saveAliasBtn.addEventListener('click', saveAlias);
+    downloadCsvBtn.addEventListener('click', downloadCsv);
+    clearLogsBtn.addEventListener('click', clearLogs);
+    hintBtn.addEventListener('click', useHint);
+    checkBtn.addEventListener('click', checkAnswer);
+    nextBtn.addEventListener('click', loadExercise);
+    topicEl.addEventListener('change', loadExercise);
+    answerEl.addEventListener('keydown', e => {
+      if(e.key === 'Enter') checkAnswer();
+    });
+
+    loadState();
+    loadExercise();
+  </script>
 </body>
 </html>
