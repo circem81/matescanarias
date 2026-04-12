@@ -7,11 +7,11 @@
   <style>
     :root{
       --bg:#0b1220;
-      --text:#eaf0ff;
+      --text:#eaf0ff;aqui?
       --muted:#bcd1ff;
     }
     body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; color:var(--text); background: radial-gradient(1200px 600px at 10% 10%, rgba(99,102,241,.25), transparent), radial-gradient(800px 600px at 90% 30%, rgba(56,189,248,.2), transparent), var(--bg); min-height: 100vh; display:flex; justify-content:center; padding: 18px;}
-    .app{width:min(980px,100%);} 
+    .app{width:min(980px,100%);}
     header{display:flex; justify-content:space-between; gap:12px; align-items:end; margin-bottom:12px;}
     h1{margin:0;font-size:24px;}
     .score{font-weight:700; color:var(--muted);}
@@ -43,13 +43,37 @@
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <header>
-      <div>
-        <h1>Mates Canarias</h1>
-        <div style="color:var(--muted); font-size:13px;">Comprender → Representar → Ejecutar</div>
-      </div>
+
+  <header></headerSí, justo ahí 👍
+
+Te falta **cerrar bien la etiqueta `<header>`**, ahora está cortada y por eso puede romperte cosas del diseño.
+
+Cámbialo por esto:
+
+```html
+<header>
+  <div style="display:flex; gap:12px; align-items:center; padding:12px;">
+    <a href="criterios.html" style="text-decoration:none">
+      <button class="accent">➡️ Criterios y saberes</button>
+    </a>
+  </div>
+
+  <div class="score">Puntos: <span id="score">0</span></div>
+</header>
+```
+
+🔴 Lo importante:
+- Quita esto: `</header<`
+- Sustitúyelo por `<header>` al inicio y `</header>` bien cerrado al final
+
+Si no lo cierras bien es como un alumno que empieza el examen y no pone el nombre: todo parece correcto… pero luego no cuadra nada 😅
+  <div style="display:flex; gap:12px; align-items:center; padding:12px;">
+    <a href="criterios.html" style="text-decoration:none">
+      <button class="accent">➡️ Criterios y saberes</button>
+    </a>
+  </div>
       <div class="score">Puntos: <span id="score">0</span></div>
     </header>
 
