@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mates Canarias · Criterios & Saberes (1º-2º ESO)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1830cc;
+      --text:#eaf0ff;
+      --muted:#aeb8d8;
+      --accent:#41d6ff;
+      --good:#24e28a;
+      --bad:#ff4d6d;
+    }
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: radial-gradient(1200px 800px at 20% 0%, #16264d, #090e1f 55%), var(--bg); color: var(--text);}
+    header{padding: 16px 16px 8px; display:flex; gap:12px; align-items:center; justify-content:space-between;}
+    header h1{margin:0; font-size: 18px;}
+    .meta{font-size: 13px; color: var(--muted);}
+    .wrap{max-width: 980px; margin: 0 auto; padding: 0 16px 24px;}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .grid{display:grid; grid-template-columns: 1fr; gap: 12px;}
+    .row{display:flex; gap:12px; flex-wrap:wrap;}
+    label{font-size: 12px; color: var(--muted);}
+    select, input, textarea{
+      width:100%;
+      background: rgba(255,255,255,.92);
+      color:#0b1220;
+      border: 1px solid rgba(10, 14, 30, .18);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    textarea{min-height: 60px;}
+    option{color:#0b1220;}
+    button{
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      cursor:pointer;
+      font-weight: 600;
+      letter-spacing: .1px;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover{transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.26);}
+    button:active{transform: translateY(0px) scale(.99);}
+    .accent{background: rgba(65,214,255,.12); border-color: rgba(65,214,255,.42);}
+    .good{background: rgba(36,226,138,.12); border-color: rgba(36,226,138,.42);}
+    .bad{background: rgba(255,77,109,.12); border-color: rgba(255,77,109,.35);}
+    .msg{margin-top:8px; border-radius:12px; padding:10px 12px; font-size:13px; color:#0b1220; background: rgba(255,255,255,.90); border:1px solid rgba(10,14,30,.16);}
+    .muted{color: var(--muted); font-size: 13px;}
+    .problem{border-radius: 12px; border: 1px dashed rgba(255,255,255,.25); padding: 12px; background: rgba(255,255,255,.03); margin-top: 6px;}
+    .problem h3{margin:0 0 6px 0; font-size: 14px;}
+    .problem p{margin:0; line-height: 1.55;}
+    .mini{font-size:12px; color: var(--muted); margin-top: 6px;}
+    .link{font-size: 13px; color: var(--accent);}
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>CRITERIOS + SABERES + PROBLEMAS · 1º-2º ESO</h1>
+    <div class="meta">v1 (registro local + CSV + mailto) · Aliases en lugar de nombres</div>
+  </div>
+  <div class="meta">Mates Canarias</div>
+</header>
+
+<div class="wrap">
+  <div class="card" id="aliasCard">
+    <div class="grid">
+      <div>
+        <label for="alias">Alias del alumno/a (sin apellidos)</label>
+        <input id="alias" autocomplete="off" placeholder="Ej.: nube14, escuadra02..." />
+      </div>
+      <div class="row">
+        <button class="accent" id="saveAlias">Guardar alias</button>
+        <button id="resetAlias">Borrar alias</button>
+      </div>
+      <div class="msg" id="info">Guarda alias para vincular registros. Los datos quedan en este navegador.</div>
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label for="course">Curso</label>
+        <select id="course">
+          <option value="1">1º ESO</option>
+          <option value="2">2º ESO</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="criterion">Criterio de evaluación (selector)</label>
+        <select id="criterion">
+          <option value="">— Elige uno o usa “Random” —</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="saber">Saber básico / situación (selector)</label>
+        <select id="saber">
+          <option value="">— Elige uno —</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <button class="accent" id="randomAll">Random: curso+criterio+saber</button>
+        <button id="randomProblem">Random: problema dentro de esa etiqueta</button>
+        <button class="good" id="clearProblem">Limpiar</button>
+      </div>
+
+      <div class="problem" id="problemBox" style="display:none">
+        <h3 id="problemTitle"></h3>
+        <p id="problemText"></p>
+        <div class="mini" id="problemTags"></div>
+      </div>
+
+      <div>
+        <label for="obs">Observaciones / evidencia (texto breve)</label>
+        <textarea id="obs" placeholder="Aquí puedes anotar si hay justificación, razonamiento, cálculo, estimación, etc."></textarea>
+      </div>
+
+      <div class="row">
+        <button class="accent" id="saveLog">Guardar registro</button>
+        <button id="downloadCsv">Descargar CSV (todos)</button>
+        <button class="bad" id="clearLogs">Borrar registros de este dispositivo</button>
+      </div>
+
+      <div class="row">
+        <button id="emailReport">Preparar email a profe</button>
+        <div class="muted">→ se abre un borrador (mailto) a tu correo, tú decides enviar.</div>
+      </div>
+
+      <div class="msg" id="logSummary"></div>
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+
+  <div class="muted">
+    Nota: esta app es un cruce “ligero” para trabajar con tags. Si me pasas tu lista completa (LOMLOE Canarias) te la dejo completa y limpia.
+    <br>
+    <span class="link">Mejora: meter rúbrica por criterio (3 indicadores) + filtros por unidad didáctica.</span>
+  </div>
+</div>
+
+<script>
+const TEACHER_EMAIL = "cmoncabs@canariaseducacion.es";
+const LS_ALIAS = "mates_canarias_alias";
+const LS_LOGS = "mates_canarias_logs_v1";
+
+const catalog = {
+  "1": {
+    criterios: [
+      { id:"1-C1", label:"Plantea y desarrolla estrategias para resolver problemas en situaciones reales y cercanas." },
+      { id:"1-C2", label:"Lee, interpreta y comunica información con lenguaje matemático (tablas, gráficos, expresiones...)." },
+      { id:"1-C3", label:"Selecciona y emplea procedimientos de cálculo (estimación, operaciones, proporcionalidad) con sentido." }
+    ],
+    saberes: [
+      { id:"1-SN", label:"Números y operaciones" },
+      { id:"1-SF", label:"Fracciones y decimales (representación, comparaciones, cálculos)" },
+      { id:"1-SP", label:"Proporcionalidad (incluye recetas, escalas, porcentajes)" }
+    ],
+    problemas: [
+      {
+        id:"P1",
+        titulo:"Receta (proporcionalidad directa)",
+        texto:"Para 4 personas se usan 200 g de harina y 1 huevo. ¿Cuánta harina y cuántos huevos se necesitan para 10 personas?",
+        criterion:"1-C3", saber:"1-SP"
+      },
+      {
+        id:"P2",
+        titulo:"Porcentaje en contexto",
+        texto:"En una tienda aplican un descuento del 15% a una sudadera de 40€. ¿Cuál es el precio final?",
+        criterion:"1-C3", saber:"1-SP"
+      },
+      {
+        id:"P3",
+        titulo:"Gráfico: interpretación",
+        texto:"Observa un gráfico (describe o trae uno a clase) con temperaturas por día. ¿Qué tendencia se aprecia? ¿Qué día hace más calor y qué diferencia hay con el más frío?",
+        criterion:"1-C2", saber:"1-SN"
+      }
+    ]
+  },
+  "2": {
+    criterios: [
+      { id:"2-C1", label:"Modela situaciones reales con expresiones algebraicas sencillas y relaciones de proporcionalidad." },
+      { id:"2-C2", label:"Resuelve problemas y comunica el razonamiento de forma clara, usando representaciones adecuadas." },
+      { id:"2-C3", label:"Evalúa resultados (estimación, comprobación, unidades, error) y mejora la estrategia." }
+    ],
+    saberes: [
+      { id:"2-SA", label:"Álgebra (expresiones, ecuaciones, problemas con letras)" },
+      { id:"2-SP", label:"Proporcionalidad y porcentajes (aplicación en finanzas, recetas, escalas...)" },
+      { id:"2-SM", label:"Medida y magnitudes (unidades, conversión, orden de magnitud)" }
+    ],
+    problemas: [
+      {
+        id:"P4",
+        titulo:"Receta: cambio de raciones + unidades",
+        texto:"Para 5 personas: 250 g de pasta, 120 g de queso rallado y 400 ml de salsa. ¿Qué cantidades se necesitan para 8 personas? (explica la estrategia).",
+        criterion:"2-C2", saber:"2-SP"
+      },
+      {
+        id:"P5",
+        titulo:"Ecuación en problema",
+        texto:"En un parque, la entrada cuesta 3€ por persona. Si pagaron en total 48€, ¿cuántas personas entraron? (plantea la ecuación).",
+        criterion:"2-C1", saber:"2-SA"
+      },
+      {
+        id:"P6",
+        titulo:"Escala con unidades",
+        texto:"Un plano tiene escala 1:500. La distancia entre dos puntos en el plano es 9 cm. ¿Cuál es la distancia real en metros?",
+        criterion:"2-C3", saber:"2-SM"
+      }
+    ]
+  }
+};
+
+const aliasEl = document.getElementById("alias");
+const infoEl = document.getElementById("info");
+const summaryEl = document.getElementById("logSummary");
+
+const courseEl = document.getElementById("course");
+const criterionEl = document.getElementById("criterion");
+const saberEl = document.getElementById("saber");
+
+const problemBox = document.getElementById("problemBox");
+const problemTitleEl = document.getElementById("problemTitle");
+const problemTextEl = document.getElementById("problemText");
+const problemTagsEl = document.getElementById("problemTags");
+
+const obsEl = document.getElementById("obs");
+
+let state = {
+  alias: "",
+  logs: [],
+  current: null
+};
+
+function loadAlias(){
+  const saved = localStorage.getItem(LS_ALIAS) || "";
+  state.alias = saved;
+  aliasEl.value = saved;
+  infoEl.textContent = saved ? `Alias cargado: ${saved}` : `Guarda alias para vincular registros.`;
+}
+function saveAlias(){
+  state.alias = (aliasEl.value || "").trim();
+  localStorage.setItem(LS_ALIAS, state.alias);
+  infoEl.textContent = state.alias ? `Alias guardado: ${state.alias}` : `Alias vacío.`;
+}
+
+function loadLogs(){
+  try{
+    state.logs = JSON.parse(localStorage.getItem(LS_LOGS) || "[]");
+  } catch(_){
+    state.logs = [];
+  }
+}
+function saveLogs(){
+  localStorage.setItem(LS_LOGS, JSON.stringify(state.logs));
+  renderSummary();
+}
+function renderSummary(){
+  const total = state.logs.length;
+  if(!total){
+    summaryEl.textContent = "Sin registros aún. Cuando guardes, aquí verás el número total y el último.";
+    return;
+  }
+  const last = state.logs[total-1];
+  const lastDate = new Date(last.ts).toLocaleString();
+  summaryEl.innerHTML = `<b>${total}</b> registros. Último: <b>${last.alias || "(sin alias)"}</b> · ${last.course}º · ${last.criterion} · ${last.saber} · ${last.problem} · ${lastDate}`;
+}
+
+function populateSelectors(){
+  const course = courseEl.value;
+  const cat = catalog[course];
+  criterionEl.innerHTML = `<option value="">— Elige uno —</option>` + cat.criterios.map(c => `<option value="${c.id}">${c.id} · ${c.label}</option>`).join("");
+  saberEl.innerHTML = `<option value="">— Elige uno —</option>` + cat.saberes.map(s => `<option value="${s.id}">${s.id} · ${s.label}</option>`).join("");
+}
+
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function setMessage(msg, type="muted"){
+  summaryEl.textContent = msg;
+  summaryEl.style.color = (type==="bad" ? "#ff4d6d" : type==="good" ? "#24e28a" : "#eaf0ff");
+  summaryEl.style.background = type==="bad" ? "rgba(255,77,109,.08)" : type==="good" ? "rgba(36,226,138,.07)" : "rgba(255,255,255,.03)";
+  summaryEl.style.border = "none";
+}
+
+function pickProblem(){
+  const course = courseEl.value;
+  const criterion = criterionEl.value || "";
+  const saber = saberEl.value || "";
+  const cat = catalog[course];
+
+  let filtered = cat.problemas;
+  if(criterion) filtered = filtered.filter(p => p.criterion===criterion);
+  if(saber) filtered = filtered.filter(p => p.saber===saber);
+
+  if(!filtered.length){
+    setMessage("Sin problemas que coincidan con esas etiquetas. Elige menos filtros o amplía banco.", "bad");
+    problemBox.style.display = "none";
+    state.current = null;
+    return;
+  }
+
+  const p = rand(filtered);
+  const critObj = cat.criterios.find(x => x.id===p.criterion);
+  const sabObj = cat.saberes.find(x => x.id===p.saber);
+
+  state.current = {course, problem: p, criterion: critObj, saber: sabObj};
+
+  problemTitleEl.textContent = `${p.titulo}`;
+  problemTextEl.textContent = p.texto;
+  problemTagsEl.textContent = `${course}º ESO · ${p.criterion} · ${critObj ? critObj.label : ""} · ${p.saber} · ${sabObj ? sabObj.label : ""}`;
+  problemBox.style.display = "block";
+
+  setMessage(`Problema listo. Guarda evidencia si procede.`, "good");
+}
+
+function addLog(){
+  if(!state.current){
+    setMessage("Primero genera un problema.", "bad");
+    return;
+  }
+  const alias = (aliasEl.value || "").trim();
+  if(!alias){
+    setMessage("Alias vacío: guárdalo antes de registrar (o se guarda como ‘(sin alias)’).", "bad");
+  }
+  const obs = (obsEl.value || "").trim();
+
+  state.logs.push({
+    ts: Date.now(),
+    alias,
+    course: state.current.course,
+    criterion: state.current.criterion?.id || state.current.problem.criterion,
+    saber: state.current.saber?.id || state.current.problem.saber,
+    problem: `${state.current.problem.id} ${state.current.problem.titulo}`,
+    obs
+  });
+  obsEl.value = "";
+  saveLogs();
+  setMessage(`Registro guardado.`, "good");
+}
+
+function downloadCsv(){
+  if(!state.logs.length){
+    setMessage("No hay registros que descargar.", "bad");
+    return;
+  }
+  const lines = [
+    "timestamp,fecha_hora,alias,curso,criterio,saber,problema,observaciones",
+    ...state.logs.map(l => {
+      const dt = new Date(l.ts).toISOString();
+      // CSV sencillo; escapa comas básicas reemplazando con punto y coma
+      const safe = (t)=> (t || "").replace(/,/g,";");
+      return `${l.ts},${dt},${safe(l.alias)},${safe(l.course)},${safe(l.criterion)},${safe(l.saber)},${safe(l.problem)},${safe(l.obs)}`;
+    })
+  ];
+  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "criterios_saberes_registros.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  setMessage("CSV descargado.", "good");
+}
+
+function emailReport(){
+  if(!state.logs.length){
+    setMessage("No hay registros para email.", "bad");
+    return;
+  }
+  const alias = (aliasEl.value || "(sin alias)").trim();
+  const subject = encodeURIComponent(`Evidencias Mates · alias ${alias}`);
+  const bodyLines = [
+    `Alias: ${alias}`,
+    `Total registros: ${state.logs.length}`,
+    ``,
+    ...state.logs.slice(-8).map(l=>{
+      const d = new Date(l.ts).toLocaleString();
+      return `- ${d} · ${l.course}º · ${l.criterion} · ${l.saber} · ${l.problem} · ${l.obs}`;
+    }),
+    ``,
+    `Notas: registros locales (localStorage). CSV adjunto si procede.`
+  ];
+  const body = encodeURIComponent(bodyLines.join("\n"));
+  window.location.href = `mailto:${TEACHER_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function clearLogs(){
+  const ok = confirm("Esto borra los registros de ESTE dispositivo. ¿Seguro?");
+  if(!ok) return;
+  state.logs = [];
+  saveLogs();
+  setMessage("Registros borrados en este dispositivo.", "good");
+}
+
+function clearProblem(){
+  state.current = null;
+  problemBox.style.display = "none";
+  problemTitleEl.textContent = "";
+  problemTextEl.textContent = "";
+  problemTagsEl.textContent = "";
+  obsEl.value = "";
+  setMessage("Limpio. Lista para otra combinación.", "muted");
+}
+
+document.getElementById("saveAlias").addEventListener("click", saveAlias);
+document.getElementById("resetAlias").addEventListener("click", ()=>{
+  aliasEl.value = "";
+  saveAlias();
+});
+
+courseEl.addEventListener("change", ()=>{
+  populateSelectors();
+  clearProblem();
+});
+
+document.getElementById("randomAll").addEventListener("click", ()=>{
+  const course = courseEl.value;
+  const cat = catalog[course];
+  const c = rand(cat.criterios);
+  const s = rand(cat.saberes);
+  criterionEl.value = c.id;
+  saberEl.value = s.id;
+  pickProblem();
+});
+document.getElementById("randomProblem").addEventListener("click", pickProblem);
+document.getElementById("saveLog").addEventListener("click", addLog);
+document.getElementById("downloadCsv").addEventListener("click", downloadCsv);
+document.getElementById("emailReport").addEventListener("click", emailReport);
+document.getElementById("clearLogs").addEventListener("click", clearLogs);
+document.getElementById("clearProblem").addEventListener("click", clearProblem);
+
+loadAlias();
+loadLogs();
+populateSelectors();
+renderSummary();
+</script>
+</body>
+</html>
